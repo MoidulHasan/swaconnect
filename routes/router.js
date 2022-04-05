@@ -10,11 +10,13 @@ const express = require('express');
 const router = express.Router();
 
 // routes
-const baseRoutes = require('../controllers/base/baseControler');
+const baseRoutes = require('./base');
+const loginRoute = require('./login/login.route');
 
-// Router for base url
-router.all('/', baseRoutes)
 
+// public router
+router.all('/', baseRoutes);
+router.use('/login', loginRoute);
 
 
 // router.post('/login', authController.login);

@@ -18,7 +18,7 @@ const bodyParser = require("body-parser");
 
 const appError = require("./controllers/error/appError");
 const globalErrorHandler = require("./controllers/error/globalError");
-const routeHandler = require("./routes");
+const routeHandler = require("./routes/router");
 
 
 // Module Scafolding
