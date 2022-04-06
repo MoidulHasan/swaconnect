@@ -22,13 +22,18 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "teacher", "student"],
-        default: "student",
+        enum: ["admin"],
+        default: "admin",
     },
     active: {
         type: Boolean,
         default: true,
         select: false,
+    },
+    loginStatus: {
+        type: Boolean,
+        default: false,
+        select: true,
     },
 });
 
@@ -54,5 +59,5 @@ userSchema.methods.correctPassword = async function(
     return await bcrypt.compare(typedPassword, originalPassword);
 };
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("user", userSchema);
 module.exports = User;

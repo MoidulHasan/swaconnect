@@ -1,8 +1,8 @@
 /**
- * Title: Signup Router
- * Descriptions: Provide route handler for register new user
+ * Title: Login Router
+ * Descriptions: Provide route handler for login and authenticatication
  * Author: Moidul Hasan Khan
- * Date: 05/04/2022
+ * Date: 06/04/2022
  */
 
 // Dependencies
@@ -14,7 +14,7 @@ const router = express.Router();
 
 router
     .route('/')
-    .post(authController.signup);
+    .get(authController.logout);
 
 
 

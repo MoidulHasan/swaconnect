@@ -11,20 +11,22 @@ const router = express.Router();
 
 // routes
 const baseRoutes = require('./base');
-const loginRoute = require('./login/login.route');
+const loginRouter = require('./login/login.route');
+const signupRouter = require('./signup/signup.route');
+const logoutRouter = require('./logout/logout.route');
+const { authenticator } = require("../controllers/auth/authControler")
 
 
 // public router
 router.all('/', baseRoutes);
-router.use('/login', loginRoute);
+router.use('/login', loginRouter);
+router.use('/signup', signupRouter);
 
 
-// router.post('/login', authController.login);
-// router.post('/signup', authController.signup);
 
-// // Protect all routes after this middleware
-// router.use(authController.protect);
-
+// Protect all routes after this middleware
+router.use(authenticator);
+router.use('/logout', logoutRouter);
 
 // export module
 module.exports = router;
