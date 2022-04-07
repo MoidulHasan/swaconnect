@@ -75,9 +75,6 @@ auth.login = async(req, res, next) => {
                     res.status(200).json({
                         status: "success",
                         token,
-                        data: {
-                            user,
-                        },
                     });
                 }
             }
@@ -158,7 +155,7 @@ auth.authenticator = async(req, res, next) => {
                 new AppError(
                     401,
                     "fail",
-                    "You are not logged in! Please login in to continue",
+                    "You are not logged in! Please login in to continue1",
                 ),
                 req,
                 res,
@@ -180,10 +177,11 @@ auth.authenticator = async(req, res, next) => {
             );
         }
 
+        console.log(user);
         // 4) check if user is logedin or not
         if (!user.loginStatus) {
             return next(
-                new AppError(401, "fail", "You are not logged in! Please login in to continue"),
+                new AppError(401, "fail", "You are not logged in! Please login in to continue2"),
                 req,
                 res,
                 next,

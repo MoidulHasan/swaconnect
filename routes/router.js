@@ -12,8 +12,9 @@ const router = express.Router();
 // routes
 const baseRoutes = require('./base');
 const loginRouter = require('./login/login.route');
-const signupRouter = require('./signup/signup.route');
 const logoutRouter = require('./logout/logout.route');
+const signupRouter = require('./signup/signup.route');
+const simCardRouter = require('./simcard/simcard.route');
 const { authenticator } = require("../controllers/auth/authControler")
 
 
@@ -27,6 +28,8 @@ router.use('/signup', signupRouter);
 // Protect all routes after this middleware
 router.use(authenticator);
 router.use('/logout', logoutRouter);
+router.use('/simcard', simCardRouter);
+
 
 // export module
 module.exports = router;

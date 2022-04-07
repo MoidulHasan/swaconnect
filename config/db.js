@@ -14,8 +14,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 
-
-
 // Module Scafolding
 const database = {};
 
