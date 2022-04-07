@@ -1,28 +1,43 @@
+// dependencies
 const mongoose = require("mongoose");
+const customValidator = require("../../utilities/validator");
 
+
+
+// Define sim card schema
 const simCardSchema = new mongoose.Schema({
+    _id: {
+        type: Number,
+        required: true,
+        unique: true,
+        select: true,
+        default: 1001,
+    },
     SSID: {
         type: String,
         required: [true, "Please fill Sim Card SSID"],
         select: true,
+        unique: true,
+        validate: customValidator.isNonZeroLengthString,
     },
     PUK1: {
         type: String,
         required: [true, "Please fill PUK1 id"],
         select: true,
+        validate: customValidator.isNonZeroLengthString,
     },
-    Created_date: {
+    createdDate: {
         type: Date,
         // required: [true, "SIM Card Created Date Required"],
         select: true,
     },
-    SIM_Status: {
+    simStatus: {
         type: String,
         enum: ["Blank", "Active", "Hotline"],
         default: "Blank",
         select: true,
     },
-    Status_Date: {
+    statusDate: {
         type: Date,
         // required: true,
         select: true,
