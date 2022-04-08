@@ -7,11 +7,11 @@ const customValidator = require("../../utilities/validator");
 // Define sim card schema
 const simCardSchema = new mongoose.Schema({
     _id: {
-        type: Number,
+        type: String,
         required: true,
         unique: true,
         select: true,
-        default: 1001,
+        default: "1001",
     },
     SSID: {
         type: String,
@@ -28,96 +28,103 @@ const simCardSchema = new mongoose.Schema({
     },
     createdDate: {
         type: Date,
-        // required: [true, "SIM Card Created Date Required"],
+        required: [true, "SIM Card Created Date Required"],
         select: true,
     },
     simStatus: {
         type: String,
+        required: true,
         enum: ["Blank", "Active", "Hotline"],
         default: "Blank",
         select: true,
     },
     statusDate: {
         type: Date,
-        // required: true,
+        required: true,
         select: true,
     },
     MDN: {
         type: String,
         required: [true, "SIM Card MDN Required"],
         select: true,
+        unique: true,
     },
-    User_Name: {
+    userName: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        // required: [true, "SIM Card User Name Required"],
+        ref: "users",
+        required: [true, "SIM Card User Name Required"],
     },
-    Vendor: {
+    vendor: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Vendor",
-        // required: [true, "SIM Card Vendor Name Required"],
+        ref: "vendors",
         select: true,
     },
-    Sim_Order_Number: {
+    simOrderNumber: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Sim_Card_Order",
-        // required: [true, "SIM Order Number Required"],
+        ref: "simCardOrders",
         select: false,
     },
-    Sim_Card_Compatibility: {
+    simCardCompatibility: {
         type: String,
-        // required: [true, "SIM Card Compatibility Required"],
-    },
-    Sim_Operations: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "SimOperations"
-    },
-    Physical_Status: {
-        type: String,
-        enum: ["Good", "Bad"],
         select: true,
     },
-    Distributor: {
+    simOperations: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Distributor"
+        ref: "simOperations"
     },
-    Agent: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Agent"
-    },
-    Application_number: {
+    physicalStatus: {
         type: String,
-        // required: [true, "Application Number Required"],
+        enum: ["Good", "Bad"],
+        required: [true, "sim card physical status required"],
+        select: true,
     },
-    Customer_Id: {
+    distributor: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Customer"
+        ref: "distributors"
     },
-    Customer_First_Name: {
+    agent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "agents"
+    },
+    applicationNumber: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "applications"
+    },
+    customerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "customers"
+    },
+    customerFirstName: {
         type: String,
-        // required: [true, "Customer First Name Required"],
+        required: [true, "Customer First Name Required"],
+        select: true,
     },
-    Customer_Last_Name: {
+    customerLastName: {
         type: String,
-        // required: [true, "Customer Last Name Required"],
+        required: [true, "Customer Last Name Required"],
+        select: true,
     },
-    Phone_Plan: {
+    phonePlan: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Phone_Plans"
+        ref: "phonePlans"
     },
-    Returns: {
+    returns: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Returns"
+        ref: "returns"
     },
-    SIM_Operations_Log: [{
+    simOperationsLog: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Returns"
+        ref: "simOperationsLogs",
+        // required: true,
+        select: false
     }],
-    Notes: [{
+    notes: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Note"
+        ref: "notes",
+        select: false
     }]
-});
+}, { _id: false });
+
 
 
 const SimCard = mongoose.model("SimCard", simCardSchema);
