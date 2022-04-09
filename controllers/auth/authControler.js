@@ -7,7 +7,7 @@
 
 // Dependencies
 const AppError = require('../error/appError');
-const User = require('../../models/userModel');
+const User = require('../../models/userModels/userModel');
 const { isEmailValid } = require('../../utilities/utils');
 const logger = require('../../utilities/logger')
 const jwt = require('jsonwebtoken');
@@ -89,16 +89,17 @@ auth.login = async(req, res, next) => {
 // Signup controler
 auth.signup = async(req, res, next) => {
     try {
-        // validate user input
-        const name = typeof(req.body.name) === 'string' && req.body.name.length > 0 ? req.body.name : false;
+        // 1) validate user input
+        const fullName = typeof(req.body.fullName) === 'string' && req.body.fullName.length > 0 ? req.body.fullName : false;
+        const userName = typeof(req.body.userName) === 'string' && req.body.userName.length > 0 ? req.body.userName : false;
         const email = typeof(req.body.email) === 'string' && req.body.email.length > 0 && isEmailValid(req.body.email) ? req.body.email : false;
         const password = typeof(req.body.password) === 'string' && req.body.password.length > 0 ? req.body.password : false;
         const role = typeof(req.body.role) === 'string' && req.body.role.length > 0 ? req.body.role : false;
         const active = typeof(req.body.active) === 'boolean' ? req.body.active : false;
         const loginStatus = false;
 
-        if (name && email && password && role && active) {
-            // 2) check if user exist
+        if (fullName && userName && email && password && role && active) {
+            // 2) check and response if user exist
             const userStatus = await User.findOne({ email, });
             if (userStatus) {
                 res.status(400).json({
@@ -106,9 +107,10 @@ auth.signup = async(req, res, next) => {
                     message: "This email is already registered"
                 });
             } else {
-                // create user object
+                // 3) create user object
                 const userObj = {
-                    name,
+                    fullName,
+                    userName,
                     email,
                     password,
                     role,
@@ -116,17 +118,25 @@ auth.signup = async(req, res, next) => {
                     loginStatus,
                 };
 
-                // create user
+
+                // 4) create user
                 const user = await User.create(userObj);
 
-                user.password = undefined;
+                // 5) check and response success if user is inserted to database
+                if (user) {
+                    user.password = undefined;
 
-                res.status(201).json({
-                    status: "success",
-                    data: {
-                        user,
-                    },
-                });
+                    res.status(201).json({
+                        status: "success",
+                        data: {
+                            user,
+                        },
+                    });
+                } else {
+                    // 6) if user is not inse
+                    console.log("user not inserted", user);
+                }
+
             }
         } else {
             const err = new AppError(400, "bad request", "You have problem with your input data");
@@ -135,7 +145,8 @@ auth.signup = async(req, res, next) => {
 
 
     } catch (err) {
-        logger.error(err);
+        logger.error(err.errors);
+        console.log(err.errors);
         const error = new AppError(500, "Server Error", "There is an internal server error, please try again letter");
         next(error);
     }
