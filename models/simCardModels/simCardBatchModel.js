@@ -33,5 +33,5 @@ const simCardBatchSchema = mongoose.Schema({
 
 
 // export model
-const simCardBatch = mongoose.model("simCardBatch", simCardBatchSchema);
+const simCardBatch = mongoose.model("SimCardBatch", simCardBatchSchema);
 module.exports = simCardBatch;

@@ -8,10 +8,10 @@ const customValidator = require("../../utilities/validator");
 const simCardSchema = new mongoose.Schema({
     _id: {
         type: String,
-        required: true,
+        required: [true, "Sim card id is required"],
         unique: true,
         select: true,
-        default: "1001",
+        default: "100001",
     },
     SSID: {
         type: String,
@@ -51,27 +51,33 @@ const simCardSchema = new mongoose.Schema({
     },
     userName: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
+        ref: "user",
         required: [true, "SIM Card User Name Required"],
     },
     vendor: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "vendors",
+        ref: "vendor",
         select: true,
     },
     simOrderNumber: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "simCardOrders",
+        ref: "SimCardOrder",
         select: false,
     },
     simCardCompatibility: {
+        /**
+         * !have to know more about it
+         */
         type: String,
         select: true,
     },
     simOperations: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "simOperations"
+        ref: "SimOperations"
     },
+    /**
+     * !field name changed to physicalStatus from good/bad, need to inform
+     */
     physicalStatus: {
         type: String,
         enum: ["Good", "Bad"],
@@ -79,48 +85,44 @@ const simCardSchema = new mongoose.Schema({
         select: true,
     },
     distributor: {
+        /**
+         * !need to confirmed when distributor will be added, at the begining of adding sim card or at any time
+         */
         type: mongoose.Schema.Types.ObjectId,
-        ref: "distributors"
+        ref: "Distributor"
     },
     agent: {
+        /**
+         * !need to confirmed when agent will be added, at the begining of adding sim card or at any time
+         */
         type: mongoose.Schema.Types.ObjectId,
-        ref: "agents"
+        ref: "Agent"
     },
     applicationNumber: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "applications"
+        ref: "Application",
     },
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "customers"
-    },
-    customerFirstName: {
-        type: String,
-        required: [true, "Customer First Name Required"],
-        select: true,
-    },
-    customerLastName: {
-        type: String,
-        required: [true, "Customer Last Name Required"],
-        select: true,
+        ref: "Customer",
     },
     phonePlan: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "phonePlans"
+        ref: "phonePlan",
     },
     returns: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "returns"
+        ref: "Return"
     },
     simOperationsLog: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "simOperationsLogs",
+        ref: "SimOperationsLog",
         // required: true,
         select: false
     }],
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "notes",
+        ref: "Notes",
         select: false
     }]
 }, { _id: false });

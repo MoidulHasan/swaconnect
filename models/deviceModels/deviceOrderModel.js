@@ -5,10 +5,11 @@ const mongoose = require('mongoose');
 // schema schafolding
 const deviceOrderSchema = mongoose.Schema({
     orderNumber: {
-        type: Number,
+        type: String,
         required: [true, "Device order number required"],
         unique: true,
         select: true,
+        default: "700001"
     },
     orderDate: {
         type: Date,
@@ -28,11 +29,15 @@ const deviceOrderSchema = mongoose.Schema({
         select: true,
     },
     files: [{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File",
         required: false,
         select: true,
     }],
     trackingNumber: {
+        /**
+         * !Have some confusion here
+         */
         type: Number,
         required: [true, "Tracking number is required"],
         unique: true,
@@ -44,7 +49,8 @@ const deviceOrderSchema = mongoose.Schema({
         select: true,
     },
     batchNumber: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "DeviceBatch",
         select: true,
     },
     deviceModel: {
@@ -54,11 +60,11 @@ const deviceOrderSchema = mongoose.Schema({
     },
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "notes"
+        ref: "Note"
     }],
 });
 
 
 // export schema
-const deviceOrder = mongoose.model("deviceOrder", deviceOrderSchema);
+const deviceOrder = mongoose.model("DeviceOrder", deviceOrderSchema);
 module.exports = deviceOrder;

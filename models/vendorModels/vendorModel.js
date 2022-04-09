@@ -9,7 +9,7 @@ const vendorSchema = new mongoose.schema({
         required: true,
         unique: true,
         select: true,
-        default: "10001"
+        default: "800001"
     },
     company: {
         type: String,
@@ -73,6 +73,12 @@ const vendorSchema = new mongoose.schema({
     },
     notes: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Note",
         required: false,
     }
-}, { _id: false })
+}, { _id: false });
+
+
+// export model
+const Vendor = mongoose.Model("Vendor", vendorSchema);
+module.exports = Vendor;

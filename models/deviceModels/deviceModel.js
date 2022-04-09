@@ -9,7 +9,7 @@ const deviceSchema = mongoose.Schema({
         required: [true, "device id is required"],
         unique: true,
         select: true,
-        default: "200001",
+        default: "500001",
     },
     deviceType: {
         type: String,
@@ -71,10 +71,12 @@ const deviceSchema = mongoose.Schema({
     },
     vendor: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Vendor",
         select: true,
     },
     pictures: [{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File",
         required: false,
         select: false,
     }],
@@ -84,16 +86,25 @@ const deviceSchema = mongoose.Schema({
         select: false,
     }],
     distributor: {
+        /**
+         * !is it possible to have multiple distributor
+         */
         type: mongoose.Schema.Types.ObjectId,
-        ref: "distributors"
+        ref: "Distributor",
+        select: true,
     },
     agent: {
+        /**
+         * !is it possible to have multiple agent
+         */
         type: mongoose.Schema.Types.ObjectId,
-        ref: "agents"
+        ref: "Agent",
+        select: true,
     },
     deviceOrderNumber: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "deviceOrders"
+        ref: "deviceOrders",
+        select: true,
     },
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -103,5 +114,5 @@ const deviceSchema = mongoose.Schema({
 
 
 // export schema
-const deviceModel = mongoose.model("device", deviceSchema);
+const deviceModel = mongoose.model("Device", deviceSchema);
 module.exports = deviceModel;

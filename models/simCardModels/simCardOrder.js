@@ -13,6 +13,7 @@ const simCardOrderSchema = mongoose.Schema({
     orderDate: {
         type: Date,
         required: [true, "Sim card order date required"],
+        default: Date.now(),
         unique: false,
         select: true,
     },
@@ -24,15 +25,19 @@ const simCardOrderSchema = mongoose.Schema({
     },
     vendorId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "vendors",
+        ref: "Vendor",
         select: true,
     },
     files: [{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File",
         required: false,
         select: true,
     }],
     trackingNumber: {
+        /**
+         * !need to know more about it
+         */
         type: Number,
         required: [true, "Tracking number is required"],
         unique: true,
@@ -44,15 +49,16 @@ const simCardOrderSchema = mongoose.Schema({
         select: true,
     },
     batchNumber: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "SimCardBatch",
     },
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "notes"
+        ref: "Notes"
     }],
 });
 
 
 // export schema
-const simCardOrder = mongoose.model("simCardOrder", simCardOrderSchema);
+const simCardOrder = mongoose.model("SimCardOrder", simCardOrderSchema);
 module.exports = simCardOrder;

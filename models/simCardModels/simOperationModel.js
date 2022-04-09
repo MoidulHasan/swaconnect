@@ -27,6 +27,6 @@ const simOperationLogSchema = mongoose.Schema({
 }, { _id: false });
 
 
-const simOperationLog = mongoose.model("simOperationLog", simOperationLogSchema);
-
+// export model
+const simOperationLog = mongoose.model("SimOperationLog", simOperationLogSchema);
 module.exports = simOperationLog;
