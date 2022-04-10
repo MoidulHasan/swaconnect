@@ -39,5 +39,5 @@ const phonePlanSchema = mongoose.Schema({
 
 
 // export model
-const phonePlan = mongoose.model("phonePlan", phonePlanSchema);
+const phonePlan = mongoose.model("PhonePlan", phonePlanSchema);
 module.exports = phonePlan;

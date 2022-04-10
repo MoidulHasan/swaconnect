@@ -39,6 +39,59 @@ const serviceCarrierSchema = mongoose.Schema({
     },
     files: [{
         type: mongoose.Schema.Types.ObjectId,
+        select: false,
+    }],
+    apiUserName: {
+        type: String,
+        required: [true, "API user name is required"],
+        select: false,
+    },
+    apiTokenPassword: {
+        type: String,
+        required: [true, "API password is required"]
+    },
+    CLECID: {
+        type: String,
+        required: [true, "CLIECID is required"],
+        select: false,
+    },
+    apiPin: {
+        type: String,
+        required: [true, "API pin is required"],
+        select: false,
+    },
+    notes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        select: true,
+    }],
+    status: {
+        type: String,
+        enum: ["Active", "Inactive"],
+        required: true,
+        select: true,
+    },
+    supportName: {
+        type: String,
+        required: [true, "Service carreir support name is required"],
+        select: false,
+        unique: false,
+    },
+    supportPhone: {
+        type: String,
+        required: [true, "Service carreir support phone is required"],
+        select: false,
+    },
+    supportEmail: {
+        type: String,
+        required: [true, "Service carreir support email is required"],
+        select: false,
+        unique: true,
+        lowercase: true,
+        validate: [validator.isEmail, "Please provide a valid email"],
+    },
+    phonePlans: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PhonePlan"
     }]
 });
 

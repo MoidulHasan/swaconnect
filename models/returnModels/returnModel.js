@@ -93,9 +93,9 @@ const returnSchema = mongoose.Schema({
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
         select: false,
-    }]
+    }],
 });
 
 // export model
-const returns = mongoose.model("returns", returnSchema);
+const returns = mongoose.model("Returns", returnSchema);
 module.exports = returns;

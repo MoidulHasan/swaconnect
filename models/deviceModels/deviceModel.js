@@ -103,12 +103,12 @@ const deviceSchema = mongoose.Schema({
     },
     deviceOrderNumber: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "deviceOrders",
+        ref: "DeviceOrder",
         select: true,
     },
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "notes"
+        ref: "Note"
     }],
 }, { _id: false });
 

@@ -80,7 +80,7 @@ simCardControlers.addSingleSimCard = async(simCardData) => {
             // 4) add id to sim card data
             simCardData._id = lastId._id + 1;
 
-            console.log("new id: ", simCardData._id)
+            // console.log("new id: ", simCardData._id)
 
             // 5) if sim card not exist then insert sim card data to database
             const newSimCart = await SimCard.create(simCardData);
