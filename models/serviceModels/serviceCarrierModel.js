@@ -106,5 +106,53 @@ const serviceCarrierSchema = mongoose.Schema({
 });
 
 
+
+
+
+// error handling middleware
+const handleError = (error, doc, next) => {
+    // console.log(Object.keys(error));
+
+    console.log("error new: ", error.keyValue);
+    if (error.code === 11000) {
+        const err = {
+            name: "customError",
+            statusCode: 400,
+            status: "bad request",
+            message: "This fields are already registerd",
+            fields: error.keyValue,
+        }
+        next(err);
+    } else if (err.name === "ValidationError") {
+
+        // take all error to errors object
+        let errors = {};
+        Object.keys(err.errors).forEach((key) => {
+            errors[key] = err.errors[key].message;
+        });
+
+        const err = {
+            name: "customError",
+            statusCode: 400,
+            status: "bad request",
+            message: "Please provide all required filed",
+            errors: errors,
+        }
+
+        next(err);
+    } else {
+        next();
+    }
+};
+
+
+serviceCarrierSchema.post('save', handleError);
+serviceCarrierSchema.post('update', handleError);
+serviceCarrierSchema.post('findOneAndUpdate', handleError);
+serviceCarrierSchema.post('insertMany', handleError);
+
+
+
 // export model
 const serviceCarrier = mongoose.model("serviceCarrier", serviceCarrierSchema);
+module.exports = serviceCarrier;
