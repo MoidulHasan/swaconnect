@@ -39,6 +39,7 @@ const serviceCarrierSchema = mongoose.Schema({
     },
     files: [{
         type: mongoose.Schema.Types.ObjectId,
+        ref: "File",
         select: false,
     }],
     apiUserName: {
@@ -62,6 +63,7 @@ const serviceCarrierSchema = mongoose.Schema({
     },
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Note",
         select: true,
     }],
     status: {
