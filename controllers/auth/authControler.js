@@ -57,8 +57,9 @@ auth.login = async(req, res, next) => {
             );
         }
 
+        console.log(user);
         // 3) All correct, send jwt to client
-        const token = auth.createToken(user.id);
+        const token = auth.createToken(user._id);
 
         // 4) make login status true in database
         User.findByIdAndUpdate(user.id, { loginStatus: true },

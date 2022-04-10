@@ -1,5 +1,5 @@
 // Dependencies
-const mongoose = require("mongooose");
+const mongoose = require("mongoose");
 const validator = require("validator");
 
 // schema schafolding
@@ -26,6 +26,7 @@ const serviceCarrierSchema = mongoose.Schema({
         type: Date,
         required: [true, "service carrear creation date is required"],
         select: true,
+        default: Date.now(),
     },
     contactName: {
         type: String,
@@ -58,7 +59,7 @@ const serviceCarrierSchema = mongoose.Schema({
         type: String,
         required: [true, "API password is required"]
     },
-    CLECID: {
+    clecid: {
         type: String,
         required: [true, "CLIECID is required"],
         select: false,
