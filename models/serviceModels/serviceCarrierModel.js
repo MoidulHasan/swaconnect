@@ -4,6 +4,13 @@ const validator = require("validator");
 
 // schema schafolding
 const serviceCarrierSchema = mongoose.Schema({
+    _id: {
+        type: Number,
+        required: [true, "Service carrier id is required"],
+        unique: true,
+        select: true,
+        default: 101,
+    },
     label: {
         type: String,
         required: [true, "service carrier label is required"],

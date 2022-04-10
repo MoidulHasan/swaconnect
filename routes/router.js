@@ -16,12 +16,13 @@ const logoutRouter = require('./logout/logout.route');
 const signupRouter = require('./signup/signup.route');
 const simCardRouter = require('./simcard/simcard.route');
 const { authenticator } = require("../controllers/auth/authControler")
-
+const applicationRouter = require("./application/application.route")
 
 // public router
 router.all('/', baseRoutes);
 router.use('/login', loginRouter);
 router.use('/signup', signupRouter);
+router.use('/application', applicationRouter);
 
 
 
