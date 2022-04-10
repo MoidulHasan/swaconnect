@@ -4,7 +4,6 @@ const now = new Date();
 const SimCard = require('../../models/simCardModels/simCardModel')
 const AppError = require('../../controllers/error/appError');
 const logger = require('../../utilities/logger');
-// const User = require('../../models/userModel')
 
 
 
@@ -30,6 +29,10 @@ simCardControlers.add = async(req, res, next) => {
                 }
             });
         } else {
+
+            // add sim card  status date as today
+            simCardData.statusDate = Date.now();
+
             // get sim card input response
             const simCardInsert = await simCardControlers.addSingleSimCard(simCardData);
 
@@ -76,11 +79,11 @@ simCardControlers.addSingleSimCard = async(simCardData) => {
 
             // 3) find last inserted sim card id
             const lastId = await SimCard.findOne().sort('-_id');
-
-            // 4) add id to sim card data
-            simCardData._id = lastId._id + 1;
-
-            // console.log("new id: ", simCardData._id)
+            if (lastId) {
+                // 4) add new id to sim card data
+                let newId = parseInt(lastId._id) + 1;
+                simCardData._id = typeof(newId) === "number" ? newId : false;
+            }
 
             // 5) if sim card not exist then insert sim card data to database
             const newSimCart = await SimCard.create(simCardData);
