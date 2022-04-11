@@ -78,12 +78,13 @@ simCardControlers.addSingleSimCard = async(simCardData) => {
         } else {
 
             // 3) find last inserted sim card id
-            const lastId = await SimCard.findOne().sort('-_id');
+            const lastId = await SimCard.findOne().sort('-id');
             if (lastId) {
                 // 4) add new id to sim card data
-                let newId = parseInt(lastId._id) + 1;
-                simCardData._id = typeof(newId) === "number" ? newId : false;
+                let newId = parseInt(lastId.id) + 1;
+                simCardData.id = typeof(newId) === "number" ? newId : false;
             }
+            console.log(lastId);
 
             // 5) if sim card not exist then insert sim card data to database
             const newSimCart = await SimCard.create(simCardData);
@@ -96,7 +97,7 @@ simCardControlers.addSingleSimCard = async(simCardData) => {
             }
         }
     } catch (err) {
-        console.log("error catched", err);
+        // console.log("error catched", err);
         // check if error is validation error
         if (err.name === "ValidationError") {
 

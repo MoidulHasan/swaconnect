@@ -5,7 +5,7 @@ const AppError = require("../../controllers/error/appError");
 
 // Schema scafolding
 const applicationSchema = mongoose.Schema({
-    _id: {
+    id: {
         type: Number,
         required: [true, "User id is required"],
         unique: true,
@@ -46,7 +46,7 @@ const applicationSchema = mongoose.Schema({
 
 
 // error handling middleware
-var handleError = (error, doc, next) => {
+const handleError = (error, doc, next) => {
     // console.log(Object.keys(error));
 
     // console.log("error new: ", error.code);

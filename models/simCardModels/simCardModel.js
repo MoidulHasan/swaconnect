@@ -6,12 +6,12 @@ const customValidator = require("../../utilities/validator");
 
 // Define sim card schema
 const simCardSchema = new mongoose.Schema({
-    _id: {
+    id: {
         type: Number,
         required: [true, "Sim card id is required"],
         unique: true,
         select: true,
-        default: 7000001,
+        default: 700001,
     },
     SSID: {
         type: String,
@@ -43,6 +43,7 @@ const simCardSchema = new mongoose.Schema({
         type: Date,
         required: true,
         select: true,
+        default: Date.now(),
     },
     MDN: {
         type: String,
