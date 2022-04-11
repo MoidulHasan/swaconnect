@@ -4,12 +4,12 @@ const validator = require("validator");
 
 // Schema Scafolding
 const vendorSchema = new mongoose.schema({
-    _id: {
-        type: String,
+    id: {
+        type: Number,
         required: true,
         unique: true,
         select: true,
-        default: "800001"
+        default: 80001
     },
     company: {
         type: String,
@@ -76,7 +76,7 @@ const vendorSchema = new mongoose.schema({
         ref: "Note",
         required: false,
     }
-}, { _id: false });
+});
 
 
 // export model

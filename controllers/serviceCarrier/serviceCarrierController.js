@@ -6,6 +6,7 @@ const AppError = require("../error/appError");
 const serviceCarrier = {};
 
 
+// add service carrier data
 serviceCarrier.add = async(req, res, next) => {
 
     // take service carrier data form the request body
@@ -17,11 +18,11 @@ serviceCarrier.add = async(req, res, next) => {
         // save service carrier data to the database
         try {
             // find last inserted id 
-            const lastId = await ServiceCarrier.findOne().sort('-_id');
+            const lastId = await ServiceCarrier.findOne().sort('-id');
             if (lastId) {
                 // add new id to sim card data
-                let newId = parseInt(lastId._id) + 1;
-                serviceCarrier._id = typeof(newId) === "number" ? newId : false;
+                let newId = parseInt(lastId.id) + 1;
+                serviceCarrier.id = typeof(newId) === "number" ? newId : false;
             }
 
             const newServiceCarrier = await ServiceCarrier.create(serviceCarrier);
@@ -70,10 +71,9 @@ serviceCarrier.view = async(req, res, next) => {
         // take service carrier id form the request query
         const serviceCarrierId = typeof(req.query.id) === "string" && req.query.id > 0 ? req.query.id : false;
 
-        console.log(typeof(req.query.id));
         // find service carrier data by id
         try {
-            const serviceCarrierData = await ServiceCarrier.findOne({ _id: serviceCarrierId }).select("+files +apiUserName +apiTokenPassword +clecid +apiPin +notes");
+            const serviceCarrierData = await ServiceCarrier.findOne({ id: serviceCarrierId }).select("+files +apiUserName +apiTokenPassword +clecid +apiPin +notes");
 
             if (serviceCarrierData) {
                 res.status(200).json({
@@ -128,7 +128,7 @@ serviceCarrier.update = async(req, res, next) => {
 
     // find service carrier data by id
     try {
-        const serviceCarrierUpdatedData = await ServiceCarrier.findOneAndUpdate({ _id: serviceCarrierId }, serviceCarrierData);
+        const serviceCarrierUpdatedData = await ServiceCarrier.findOneAndUpdate({ id: serviceCarrierId }, serviceCarrierData);
 
         if (serviceCarrierUpdatedData) {
             res.status(200).json({
@@ -148,13 +148,14 @@ serviceCarrier.update = async(req, res, next) => {
 };
 
 
+// remove service carrier data
 serviceCarrier.remove = async(req, res, next) => {
     // take service carrier id form the request query
     const serviceCarrierId = req.query.id;
 
     // find service carrier data by id
     try {
-        const serviceCarrierData = await ServiceCarrier.findOneAndDelete({ _id: serviceCarrierId });
+        const serviceCarrierData = await ServiceCarrier.findOneAndDelete({ id: serviceCarrierId });
 
         if (serviceCarrierData) {
             res.status(200).json({

@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 
 // schema schafolding
 const serviceCarrierSchema = mongoose.Schema({
-    _id: {
+    id: {
         type: Number,
         required: [true, "Service carrier id is required"],
         unique: true,

@@ -4,16 +4,18 @@ const mongoose = require("mongoose");
 
 // schema scafolding
 const phonePlanSchema = mongoose.Schema({
-    _id: {
+    id: {
         type: Number,
         required: [true, "phone plan id is required"],
         unique: true,
         select: true,
+        default: 1001,
     },
     createdDate: {
         type: Date,
         required: [true, "plan creation date is required"],
         select: true,
+        default: Date.now(),
     },
     name: {
         type: String,

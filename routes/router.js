@@ -18,6 +18,8 @@ const simCardRouter = require('./simcard/simcard.route');
 const { authenticator } = require("../controllers/auth/authControler")
 const applicationRouter = require("./application/application.route")
 const serviceCarrierRouter = require("./serviceCarrier/serviceCarrier.route")
+const phonePlan = require("./serviceCarrier/phonePlan.route")
+
 
 
 // public router
@@ -33,6 +35,8 @@ router.use(authenticator);
 router.use('/logout', logoutRouter);
 router.use('/simcard', simCardRouter);
 router.use('/servicecarrier', serviceCarrierRouter);
+router.use('/phoneplan', phonePlan);
+
 
 
 // export module
