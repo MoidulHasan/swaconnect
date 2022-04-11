@@ -6,16 +6,16 @@ const AppError = require("../error/appError");
 const vendor = {};
 
 
-// phone plan adding method
+// vendor adding method
 vendor.add = async(req, res, next) => {
 
-    // take phone plan data form the request body
+    // take vendor data form the request body
     const vendorData = typeof(req.body.vendor) === "object" ? req.body.vendor : false;
 
 
-    // check if phone plan data is present or not
+    // check if vendor data is present or not
     if (vendorData) {
-        // save phone plan data to the database
+        // save vendor data to the database
         try {
             // find last inserted id 
             const lastId = await Vendor.findOne().sort('-id');
@@ -25,12 +25,12 @@ vendor.add = async(req, res, next) => {
                 vendorData.id = typeof(newId) === "number" ? newId : false;
             }
 
-            // console.log("phone plan: ", phonePlan)
+            // console.log("vendor: ", phonePlan)
             const newVendorData = await Vendor.create(vendorData);
 
             // console.log(newVendorData);
 
-            // if new phone plan inserted then assign success response to output
+            // if new vendor inserted then assign success response to output
             if (newVendorData) {
                 res.status(201).json({
                     status: "success",
@@ -64,21 +64,18 @@ vendor.add = async(req, res, next) => {
 };
 
 
-// view phone plan data
+// view vendor data
 vendor.view = async(req, res, next) => {
 
     // console.log(req.query);
 
     if (Object.keys(req.query).length !== 0) {
-        // take phone plan id form the request query
+        // take vendor id form the request query
         const vendorId = typeof(req.query.id) === "string" && req.query.id > 0 ? req.query.id : false;
 
-        // const phonePlanObjectId = mongoose.Types.ObjectId(phonePlanId);
-        // console.log("object id: ", phonePlanObjectId);
-
-        // find phone plan data by id
+        // find vendor data by id
         try {
-            const vendorData = await PhonePlan.findOne({ id: vendorId });
+            const vendorData = await Vendor.findOne({ id: vendorId });
 
             if (vendorData) {
                 // console.log(typeof vendorData.id)
@@ -89,7 +86,7 @@ vendor.view = async(req, res, next) => {
             } else {
                 res.status(404).json({
                     status: "not found",
-                    data: "Please provide valid phone plan id",
+                    data: "Please provide valid vendor id",
                 });
             }
         } catch (err) {
@@ -97,25 +94,24 @@ vendor.view = async(req, res, next) => {
             next(error);
         }
     } else {
-
-
-        // find all phone plan data
+        // find all vendor data
         try {
-            const phonePlanData = await PhonePlan.find();
+            const vendorData = await Vendor.find();
 
-            if (phonePlanData) {
+            // console.log(vendorData);
+            if (vendorData) {
                 res.status(200).json({
                     status: "success",
-                    data: phonePlanData,
+                    data: vendorData,
                 });
             } else {
                 res.status(404).json({
                     status: "not found",
-                    data: "Please provide valid phone plan id",
+                    data: "Please provide valid vendor id",
                 });
             }
         } catch (err) {
-            const error = AppError(500, "server error", "There is an internal server error, please try again letter");
+            const error = new AppError(500, "server error", "There is an internal server error, please try again letter");
             next(error);
         }
     }
@@ -123,30 +119,30 @@ vendor.view = async(req, res, next) => {
 }
 
 
-// update phone plan data
+// update vendor data
 vendor.update = async(req, res, next) => {
 
-    console.log(req.body.phonePlan);
+    // console.log(req.body.vendor);
 
-    // take phone plan id form the request query
-    const phonePlanDataId = typeof(req.body.phonePlan.id) === "number" && req.body.phonePlan.id > 0 ? req.body.phonePlan.id : false;
+    // take vendor id form the request query
+    const vendorId = typeof(req.body.vendor.id) === "number" && req.body.vendor.id > 0 ? req.body.vendor.id : false;
 
-    // take phone plan data from the request body and make id undefined
-    const phonePlanData = typeof(req.body.phonePlan) === "object" ? req.body.phonePlan : false;
+    // take vendor data from the request body and make id undefined
+    const vendorData = typeof(req.body.vendor) === "object" ? req.body.vendor : false;
 
-    // find phone plan data by id
+    // find vendor data by id
     try {
-        const phonePlanUpdatedData = await PhonePlan.findOneAndUpdate({ id: phonePlanDataId }, phonePlanData);
+        const vendorUpdatedData = await Vendor.findOneAndUpdate({ id: vendorId }, vendorData);
 
-        if (phonePlanUpdatedData) {
+        if (vendorUpdatedData) {
             res.status(200).json({
                 status: "success",
-                message: "Phone plan data updated successfully",
+                message: "vendor data updated successfully",
             });
         } else {
             res.status(404).json({
                 status: "not found",
-                data: "Please provide valid phone plan id",
+                data: "Please provide valid vendor id",
             });
         }
     } catch (err) {
@@ -157,22 +153,22 @@ vendor.update = async(req, res, next) => {
 
 
 vendor.remove = async(req, res, next) => {
-    // take phone plan id form the request query
-    const phonePlanId = req.query.id;
+    // take vendor id form the request query
+    const vendorId = req.query.id;
 
-    // find phone plan data by id
+    // find vendor data by id
     try {
-        const phonePlanData = await PhonePlan.findOneAndDelete({ id: phonePlanId });
+        const vendorData = await Vendor.findOneAndDelete({ id: vendorId });
 
-        if (phonePlanData) {
+        if (vendorData) {
             res.status(200).json({
                 status: "success",
-                message: "phone plan is deleted successfully"
+                message: "vendor is deleted successfully"
             });
         } else {
             res.status(404).json({
                 status: "not found",
-                data: "Please provide valid phone plan id",
+                data: "Please provide valid vendor id",
             });
         }
     } catch (err) {
@@ -182,4 +178,4 @@ vendor.remove = async(req, res, next) => {
 }
 
 // export module
-module.exports = phonePlan;
+module.exports = vendor;

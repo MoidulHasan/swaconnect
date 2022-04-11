@@ -4,12 +4,12 @@ const mongoose = require("mongoose");
 
 // schema schafolding
 const deviceSchema = mongoose.Schema({
-    _id: {
-        type: String,
+    id: {
+        type: Number,
         required: [true, "device id is required"],
         unique: true,
         select: true,
-        default: "500001",
+        default: 500001,
     },
     deviceType: {
         type: String,

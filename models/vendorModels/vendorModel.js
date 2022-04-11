@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 
 // Schema Scafolding
-const vendorSchema = new mongoose.schema({
+const vendorSchema = new mongoose.Schema({
     id: {
         type: Number,
         required: true,
@@ -71,14 +71,14 @@ const vendorSchema = new mongoose.schema({
         select: true,
         unique: false,
     },
-    notes: {
+    notes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Note",
         required: false,
-    }
+    }]
 });
 
 
 // export model
-const Vendor = mongoose.Model("Vendor", vendorSchema);
+const Vendor = mongoose.model("Vendor", vendorSchema);
 module.exports = Vendor;
