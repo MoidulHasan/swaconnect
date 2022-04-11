@@ -98,14 +98,9 @@ serviceCarrier.update = async(req, res, next) => {
     // take service carrier data from the request body and make id undefined
     const serviceCarrierData = typeof(req.body.serviceCarrier) === "object" ? req.body.serviceCarrier : false;
 
-    console.log("serviceCarrier: ", req.body.serviceCarrier);
-
     // find service carrier data by id
     try {
         const serviceCarrierUpdatedData = await ServiceCarrier.findOneAndUpdate({ _id: serviceCarrierId }, serviceCarrierData);
-
-        console.log("serviceCarrierUpdatedData: ", serviceCarrierUpdatedData);
-
 
         if (serviceCarrierUpdatedData) {
             res.status(200).json({
@@ -126,7 +121,28 @@ serviceCarrier.update = async(req, res, next) => {
 
 
 serviceCarrier.remove = async(req, res, next) => {
+    // take service carrier id form the request query
+    const serviceCarrierId = req.query.id;
 
+    // find service carrier data by id
+    try {
+        const serviceCarrierData = await ServiceCarrier.findOneAndDelete({ _id: serviceCarrierId });
+
+        if (serviceCarrierData) {
+            res.status(200).json({
+                status: "success",
+                message: "Service carrier is deleted successfully"
+            });
+        } else {
+            res.status(404).json({
+                status: "not found",
+                data: "Please provide valid service carrier id",
+            });
+        }
+    } catch (err) {
+        const error = AppError(500, "server error", "There is an internal server error, please try again letter");
+        next(error);
+    }
 }
 
 // export module
