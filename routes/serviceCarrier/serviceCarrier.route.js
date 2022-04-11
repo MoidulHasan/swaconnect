@@ -1,18 +1,16 @@
 // Dependencies
 const express = require('express');
-const { add, view } = require('../../controllers/serviceCarrier/serviceCarrierController')
+const { add, view, update, remove } = require('../../controllers/serviceCarrier/serviceCarrierController')
 
 // module scafolding
 const router = express.Router();
 
 router
-    .route('/add')
-    .post(add);
-
-
-router
-    .route("/view")
-    .get(view);
+    .route("")
+    .post(add)
+    .get(view)
+    .put(update)
+    .delete(remove);
 
 
 

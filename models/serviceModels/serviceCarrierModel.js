@@ -1,6 +1,8 @@
 // Dependencies
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
+
 
 // schema schafolding
 const serviceCarrierSchema = mongoose.Schema({
@@ -146,10 +148,31 @@ const handleError = (error, doc, next) => {
 };
 
 
+// add error handling middleware after operation
 serviceCarrierSchema.post('save', handleError);
 serviceCarrierSchema.post('update', handleError);
 serviceCarrierSchema.post('findOneAndUpdate', handleError);
 serviceCarrierSchema.post('insertMany', handleError);
+
+
+
+// hash api password before store in database
+const passwordHasher = async function(next) {
+    // check the password if it is modified
+    if (!this.isModified("apiTokenPassword") && !this.isModified("apiPin")) {
+        return next();
+    }
+
+    // Hashing the api password and api pin
+    this.apiTokenPassword = await bcrypt.hash(this.apiTokenPassword, 12);
+    this.apiPin = await bcrypt.hash(this.apiPin, 12);
+
+    next();
+};
+
+
+serviceCarrierSchema.pre("save", passwordHasher);
+serviceCarrierSchema.pre("update", passwordHasher);
 
 
 

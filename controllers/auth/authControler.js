@@ -189,7 +189,7 @@ auth.authenticator = async(req, res, next) => {
             );
         }
 
-        console.log(user);
+        // console.log(user);
         // 4) check if user is logedin or not
         if (!user.loginStatus) {
             return next(
