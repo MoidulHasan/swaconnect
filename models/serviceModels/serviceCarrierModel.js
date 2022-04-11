@@ -59,7 +59,8 @@ const serviceCarrierSchema = mongoose.Schema({
     },
     apiTokenPassword: {
         type: String,
-        required: [true, "API password is required"]
+        required: [true, "API password is required"],
+        select: false,
     },
     clecid: {
         type: String,
@@ -85,25 +86,25 @@ const serviceCarrierSchema = mongoose.Schema({
     supportName: {
         type: String,
         required: [true, "Service carreir support name is required"],
-        select: false,
+        select: true,
         unique: false,
     },
     supportPhone: {
         type: String,
         required: [true, "Service carreir support phone is required"],
-        select: false,
+        select: true,
     },
     supportEmail: {
         type: String,
         required: [true, "Service carreir support email is required"],
-        select: false,
+        select: true,
         unique: true,
         lowercase: true,
         validate: [validator.isEmail, "Please provide a valid email"],
     },
     phonePlans: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "PhonePlan"
+        ref: "PhonePlan",
     }]
 });
 
@@ -155,24 +156,6 @@ serviceCarrierSchema.post('findOneAndUpdate', handleError);
 serviceCarrierSchema.post('insertMany', handleError);
 
 
-
-// hash api password before store in database
-const passwordHasher = async function(next) {
-    // check the password if it is modified
-    if (!this.isModified("apiTokenPassword") && !this.isModified("apiPin")) {
-        return next();
-    }
-
-    // Hashing the api password and api pin
-    this.apiTokenPassword = await bcrypt.hash(this.apiTokenPassword, 12);
-    this.apiPin = await bcrypt.hash(this.apiPin, 12);
-
-    next();
-};
-
-
-serviceCarrierSchema.pre("save", passwordHasher);
-serviceCarrierSchema.pre("update", passwordHasher);
 
 
 

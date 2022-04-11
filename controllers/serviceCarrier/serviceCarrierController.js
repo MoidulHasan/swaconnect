@@ -64,28 +64,56 @@ serviceCarrier.add = async(req, res, next) => {
 // view service carrier data
 serviceCarrier.view = async(req, res, next) => {
 
-    // take service carrier id form the request query
-    const serviceCarrierId = req.query.id;
+    // console.log(req.query);
 
-    // find service carrier data by id
-    try {
-        const serviceCarrierData = await ServiceCarrier.findOne({ _id: serviceCarrierId });
+    if (Object.keys(req.query).length !== 0) {
+        // take service carrier id form the request query
+        const serviceCarrierId = typeof(req.query.id) === "string" && req.query.id > 0 ? req.query.id : false;
 
-        if (serviceCarrierData) {
-            res.status(200).json({
-                status: "success",
-                data: serviceCarrierData,
-            });
-        } else {
-            res.status(404).json({
-                status: "not found",
-                data: "Please provide valid service carrier id",
-            });
+        console.log(typeof(req.query.id));
+        // find service carrier data by id
+        try {
+            const serviceCarrierData = await ServiceCarrier.findOne({ _id: serviceCarrierId }).select("+files +apiUserName +apiTokenPassword +clecid +apiPin +notes");
+
+            if (serviceCarrierData) {
+                res.status(200).json({
+                    status: "success",
+                    data: serviceCarrierData,
+                });
+            } else {
+                res.status(404).json({
+                    status: "not found",
+                    data: "Please provide valid service carrier id",
+                });
+            }
+        } catch (err) {
+            const error = AppError(500, "server error", "There is an internal server error, please try again letter");
+            next(error);
         }
-    } catch (err) {
-        const error = AppError(500, "server error", "There is an internal server error, please try again letter");
-        next(error);
+    } else {
+
+
+        // find all service carrier data
+        try {
+            const serviceCarrierData = await ServiceCarrier.find();
+
+            if (serviceCarrierData) {
+                res.status(200).json({
+                    status: "success",
+                    data: serviceCarrierData,
+                });
+            } else {
+                res.status(404).json({
+                    status: "not found",
+                    data: "Please provide valid service carrier id",
+                });
+            }
+        } catch (err) {
+            const error = AppError(500, "server error", "There is an internal server error, please try again letter");
+            next(error);
+        }
     }
+
 }
 
 
