@@ -16,11 +16,11 @@ application.add = async(req, res, next) => {
         if (applicationData) {
 
             // find the last application id if avalilable
-            const lastId = await Application.findOne().sort('-_id');
+            const lastId = await Application.findOne().sort('-id');
             if (lastId) {
                 // 4) add new id to sim card data
-                let newId = parseInt(lastId._id) + 1;
-                applicationData._id = typeof(newId) === "number" ? newId : false;
+                let newId = parseInt(lastId.id) + 1;
+                applicationData.id = typeof(newId) === "number" ? newId : false;
             }
 
             // save application data to the database

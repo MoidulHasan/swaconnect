@@ -17,8 +17,34 @@ simCardControlers.add = async(req, res, next) => {
 
     if (simAddingMethod === "manually") {
 
+
+        // validate sim card data
+        const SSID = typeof(req.body.simCardData.SSID) === "string" && req.body.simCardData.SSID.length > 0 ? req.body.simCardData.SSID : false;
+        const PUK1 = typeof(req.body.simCardData.PUK1) === "string" && req.body.simCardData.PUK1.length > 0 ? req.body.simCardData.PUK1 : false;
+        const compatibility = typeof(req.body.simCardData.compatibility) === "string" && req.body.simCardData.compatibility.length > 0 ? req.body.simCardData.compatibility : false;
+        const userName = typeof(req.body.simCardData.userName) === "string" && req.body.simCardData.userName.length > 0 ? req.body.simCardData.userName : false;
+        const subscriberId = typeof(req.body.simCardData.subscriberId) === "string" && req.body.simCardData.subscriberId.length > 0 ? req.body.simCardData.subscriberId : false;
+        const vendorId = typeof(req.body.simCardData.vendorId) === "string" && req.body.simCardData.vendorId.length > 0 ? req.body.simCardData.vendorId : false;
+        const createdDate = typeof(req.body.simCardData.createdDate) === "string" && req.body.simCardData.createdDate.length > 0 ? req.body.simCardData.createdDate : false;
+        const simStatus = typeof(req.body.simCardData.simStatus) === "string" && req.body.simCardData.simStatus.length > 0 ? req.body.simCardData.simStatus : false;
+        const physicalStatus = typeof(req.body.simCardData.physicalStatus) === "string" && req.body.simCardData.physicalStatus.length > 0 ? req.body.simCardData.physicalStatus : false;
+
+        // construct sim card object if all input data validation is currect
+        if (SSID && PUK1 && compatibility && userName && subscriberId && vendorId && createdDate && simStatus && physicalStatus) {
+            // make sim card object 
+            const simCardData = {
+                SSID,
+                PUK1,
+                createdDate,
+                compatibility,
+
+            }
+        } else {
+            const err = new AppError(400, "bad request", "Please provide valid data.");
+            next(err);
+        }
         // take sim card data form the requiest body
-        const simCardData = typeof(req.body.simCardData) === 'object' ? req.body.simCardData : false;
+        // const simCardData = typeof(req.body.simCardData) === 'object' ? req.body.simCardData : false;
 
         // check if sim card data is not present
         if (!simCardData) {
@@ -68,12 +94,13 @@ simCardControlers.add = async(req, res, next) => {
 simCardControlers.addSingleSimCard = async(simCardData) => {
     let result = {};
     try {
-        // 1) check sim card already exist
+        console.log()
+            // 1) check sim card already exist
         const simExistStatus = await SimCard.findOne({ SSID: simCardData.SSID });
 
         // 2) if sim card exist then assign error to output
         if (simExistStatus) {
-            const error = new AppError(400, "bad request", "This Sim Card is already registered");
+            const error = new AppError(400, "bad request", "This SSID is already registered");
             result.error = error;
         } else {
 
@@ -97,6 +124,8 @@ simCardControlers.addSingleSimCard = async(simCardData) => {
             }
         }
     } catch (err) {
+
+        console.log(err);
         // console.log("error catched", err);
         // check if error is validation error
         if (err.name === "ValidationError") {

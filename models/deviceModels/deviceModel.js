@@ -31,7 +31,7 @@ const deviceSchema = mongoose.Schema({
          * ! have some confussion
          */
         type: Date,
-        required: [true, "fcc approval date is required"],
+        // required: [true, "fcc approval date is required"],
     },
     IMEI1: {
         type: String,

@@ -57,7 +57,7 @@ auth.login = async(req, res, next) => {
             );
         }
 
-        console.log(user);
+        // console.log(user);
         // 3) All correct, send jwt to client
         const token = auth.createToken(user._id);
 
@@ -134,8 +134,11 @@ auth.signup = async(req, res, next) => {
                         },
                     });
                 } else {
-                    // 6) if user is not inse
-                    console.log("user not inserted", user);
+                    // 6) if user is not inserted
+                    res.status(500).json({
+                        status: "server error",
+                        message: "There is an internal server error, please try agein letter."
+                    });
                 }
 
             }
@@ -147,7 +150,7 @@ auth.signup = async(req, res, next) => {
 
     } catch (err) {
         logger.error(err.errors);
-        console.log(err.errors);
+        // console.log(err.errors);
         const error = new AppError(500, "Server Error", "There is an internal server error, please try again letter");
         next(error);
     }
@@ -215,8 +218,8 @@ auth.logout = async(req, res, next) => {
             if (err) {
                 logger.error(err);
             } else {
-                console.log("updated data", docs)
-                    // make login status true in user object
+                // console.log("updated data", docs)
+                // make login status true in user object
                 req.user.loginStatus = false;
 
                 // Remove the password from the output
