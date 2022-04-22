@@ -2,7 +2,6 @@
 const mongoose = require("mongoose");
 const customValidator = require("../../utilities/validator");
 
-
 const subscriberSchema = mongoose.Schema({
     id: {
         type: Number,
@@ -77,7 +76,7 @@ const subscriberSchema = mongoose.Schema({
         lowercase: true,
         validate: [validator.isEmail, "Please provide a valid email"],
     },
-    SSN4: {
+    ssn: {
         type: String,
         select: true,
         unique: true,
@@ -208,7 +207,7 @@ const subscriberSchema = mongoose.Schema({
         type: String,
         required: true,
         select: false,
-    }],
+    }, ],
     consentInd: {
         type: Boolean,
         required: [true, "Consent Indicator is required"],
@@ -235,19 +234,19 @@ const subscriberSchema = mongoose.Schema({
         ref: "SimCard",
         required: false,
         select: false,
-    }],
+    }, ],
     assignedDevice: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Device",
         required: false,
         select: false,
-    }],
+    }, ],
     paymentCollected: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "PaymentCollected",
         required: false,
         select: false,
-    }],
+    }, ],
     nationalVerification: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "NationalVerification",
@@ -266,4 +265,27 @@ const subscriberSchema = mongoose.Schema({
         required: false,
         select: false,
     },
+    notes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Notes",
+        select: false,
+    }, ],
 });
+
+// functionality to do before saving subscriber data\
+subscriberSchema.pre("save", async function(next) {
+    // check the password if it is modified
+    if (!this.isModified("bqpSSN") && !this.isModified("ssn")) {
+        return next();
+    }
+
+    // Hashing SSN
+    this.ssn = await bcrypt.hash(this.ssn, 12);
+    this.bqpSSN = await bcrypt.hash(this.bqpSSN, 12);
+
+    next();
+});
+
+// exort Subscriber model
+const Suscriber = mongoose.model("Suscriber", userSchema);
+module.exports = Suscriber;

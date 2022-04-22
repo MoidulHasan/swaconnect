@@ -6,27 +6,25 @@
  */
 
 // Dependencies
-const AppError = require('../error/appError');
-const User = require('../../models/userModels/userModel');
-const { isEmailValid } = require('../../utilities/utils');
-const logger = require('../../utilities/logger')
-const jwt = require('jsonwebtoken');
+const AppError = require("../error/appError");
+const User = require("../../models/userModels/userModel");
+const { isEmailValid } = require("../../utilities/utils");
+const logger = require("../../utilities/logger");
+const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
-
 
 // module scafolding
 const auth = {};
 
-auth.createToken = id => {
+auth.createToken = (id) => {
     return jwt.sign({
             id,
         },
         process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRES_IN,
-        },
+        }
     );
 };
-
 
 // login controler
 auth.login = async(req, res, next) => {
@@ -36,10 +34,14 @@ auth.login = async(req, res, next) => {
         // 1) check if email and password exist
         if (!email || !password) {
             return next(
-                new AppError(404, "login failed", "Please provide currect email and password"),
+                new AppError(
+                    404,
+                    "login failed",
+                    "Please provide currect email and password"
+                ),
                 req,
                 res,
-                next,
+                next
             );
         }
 
@@ -53,7 +55,7 @@ auth.login = async(req, res, next) => {
                 new AppError(401, "Login Failed", "Email or Password is wrong"),
                 req,
                 res,
-                next,
+                next
             );
         }
 
@@ -62,7 +64,8 @@ auth.login = async(req, res, next) => {
         const token = auth.createToken(user._id);
 
         // 4) make login status true in database
-        User.findByIdAndUpdate(user.id, { loginStatus: true },
+        User.findByIdAndUpdate(
+            user.id, { loginStatus: true },
             function(err, docs) {
                 if (err) {
                     logger.error(err);
@@ -80,32 +83,48 @@ auth.login = async(req, res, next) => {
                 }
             }
         );
-
     } catch (err) {
         next(err);
     }
 };
 
-
 // Signup controler
 auth.signup = async(req, res, next) => {
     try {
         // 1) validate user input
-        const fullName = typeof(req.body.fullName) === 'string' && req.body.fullName.length > 0 ? req.body.fullName : false;
-        const userName = typeof(req.body.userName) === 'string' && req.body.userName.length > 0 ? req.body.userName : false;
-        const email = typeof(req.body.email) === 'string' && req.body.email.length > 0 && isEmailValid(req.body.email) ? req.body.email : false;
-        const password = typeof(req.body.password) === 'string' && req.body.password.length > 0 ? req.body.password : false;
-        const role = typeof(req.body.role) === 'string' && req.body.role.length > 0 ? req.body.role : false;
-        const active = typeof(req.body.active) === 'boolean' ? req.body.active : false;
+        const fullName =
+            typeof req.body.fullName === "string" && req.body.fullName.length > 0 ?
+            req.body.fullName :
+            false;
+        const userName =
+            typeof req.body.userName === "string" && req.body.userName.length > 0 ?
+            req.body.userName :
+            false;
+        const email =
+            typeof req.body.email === "string" &&
+            req.body.email.length > 0 &&
+            isEmailValid(req.body.email) ?
+            req.body.email :
+            false;
+        const password =
+            typeof req.body.password === "string" && req.body.password.length > 0 ?
+            req.body.password :
+            false;
+        const role =
+            typeof req.body.role === "string" && req.body.role.length > 0 ?
+            req.body.role :
+            false;
+        const active =
+            typeof req.body.active === "boolean" ? req.body.active : false;
         const loginStatus = false;
 
         if (fullName && userName && email && password && role && active) {
             // 2) check and response if user exist
-            const userStatus = await User.findOne({ email, });
+            const userStatus = await User.findOne({ email });
             if (userStatus) {
                 res.status(400).json({
                     status: "Bad Request",
-                    message: "This email is already registered"
+                    message: "This email is already registered",
                 });
             } else {
                 // 3) create user object
@@ -118,7 +137,6 @@ auth.signup = async(req, res, next) => {
                     active,
                     loginStatus,
                 };
-
 
                 // 4) create user
                 const user = await User.create(userObj);
@@ -137,22 +155,53 @@ auth.signup = async(req, res, next) => {
                     // 6) if user is not inserted
                     res.status(500).json({
                         status: "server error",
-                        message: "There is an internal server error, please try agein letter."
+                        message: "There is an internal server error, please try agein letter.",
                     });
                 }
-
             }
         } else {
-            const err = new AppError(400, "bad request", "You have problem with your input data");
+            const err = new AppError(
+                400,
+                "bad request",
+                "You have problem with your input data"
+            );
             next(err);
         }
-
-
     } catch (err) {
-        logger.error(err.errors);
-        // console.log(err.errors);
-        const error = new AppError(500, "Server Error", "There is an internal server error, please try again letter");
-        next(error);
+        // console.log(err);
+        let response = {};
+        if (err.code === 11000) {
+            let errors = [];
+
+            Object.keys(err.keyValue).forEach((key) => {
+                const errMessage = `${key} ${err.keyValue[key]} is already exist`;
+                errors.push(errMessage);
+            });
+            if (errors.length > 0) {
+                response = new AppError(
+                    400,
+                    "bad request",
+                    "There is some problem with your request"
+                );
+                response.message = errors;
+            }
+        } else if (err.name === "ValidationError") {
+            response = new AppError(
+                400,
+                "bad request",
+                "There is some problem with your request"
+            );
+            response.message = err.message;
+        } else {
+            logger.error(err);
+            response = new AppError(
+                500,
+                "Server Error",
+                "There is an internal server error, please try again letter"
+            );
+        }
+
+        next(response);
     }
 };
 
@@ -161,7 +210,10 @@ auth.authenticator = async(req, res, next) => {
     try {
         // 1) check if the token is there
         let token;
-        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        if (
+            req.headers.authorization &&
+            req.headers.authorization.startsWith("Bearer")
+        ) {
             token = req.headers.authorization.split(" ")[1];
         }
 
@@ -170,11 +222,11 @@ auth.authenticator = async(req, res, next) => {
                 new AppError(
                     401,
                     "fail",
-                    "You are not logged in! Please login in to continue1",
+                    "You are not logged in! Please login in to continue1"
                 ),
                 req,
                 res,
-                next,
+                next
             );
         }
 
@@ -188,7 +240,7 @@ auth.authenticator = async(req, res, next) => {
                 new AppError(401, "fail", "This user is no longer exist"),
                 req,
                 res,
-                next,
+                next
             );
         }
 
@@ -196,10 +248,14 @@ auth.authenticator = async(req, res, next) => {
         // 4) check if user is logedin or not
         if (!user.loginStatus) {
             return next(
-                new AppError(401, "fail", "You are not logged in! Please login in to continue2"),
+                new AppError(
+                    401,
+                    "fail",
+                    "You are not logged in! Please login in to continue2"
+                ),
                 req,
                 res,
-                next,
+                next
             );
         }
 
@@ -210,10 +266,10 @@ auth.authenticator = async(req, res, next) => {
     }
 };
 
-
 auth.logout = async(req, res, next) => {
     // make login status false in database
-    User.findByIdAndUpdate(req.user.id, { loginStatus: false },
+    User.findByIdAndUpdate(
+        req.user.id, { loginStatus: false },
         function(err, docs) {
             if (err) {
                 logger.error(err);
@@ -228,13 +284,13 @@ auth.logout = async(req, res, next) => {
                 res.status(200).json({
                     status: "success",
                     data: {
-                        message: "logout successfully"
+                        message: "logout successfully",
                     },
                 });
             }
         }
     );
-}
+};
 
 // export module
 module.exports = auth;

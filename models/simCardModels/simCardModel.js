@@ -2,9 +2,6 @@
 const mongoose = require("mongoose");
 const customValidator = require("../../utilities/validator");
 
-
-
-
 // Define sim card schema
 const simCardSchema = new mongoose.Schema({
     id: {
@@ -76,7 +73,7 @@ const simCardSchema = new mongoose.Schema({
     },
     operations: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "SimOperations"
+        ref: "SimOperations",
     },
     /**
      * !field name changed to physicalStatus from good/bad, need to inform
@@ -92,14 +89,14 @@ const simCardSchema = new mongoose.Schema({
          * !need to confirmed when distributor will be added, at the begining of adding sim card or at any time
          */
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Distributor"
+        ref: "Distributor",
     },
     agent: {
         /**
          * !need to confirmed when agent will be added, at the begining of adding sim card or at any time
          */
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Agent"
+        ref: "Agent",
     },
     applicationNumber: {
         type: mongoose.Schema.Types.ObjectId,
@@ -115,38 +112,38 @@ const simCardSchema = new mongoose.Schema({
     },
     returns: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Return"
+        ref: "Return",
     },
     simOperationsLog: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "SimOperationsLog",
         // required: true,
-        select: false
-    }],
+        select: false,
+    }, ],
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Notes",
-        select: false
-    }]
+        select: false,
+    }, ],
 });
-
 
 // error handling middleware
 const handleError = (error, doc, next) => {
-    // console.log(Object.keys(error));
-
-    console.log("error new: ", error.keyValue);
     if (error.code === 11000) {
-        const err = {
-            name: "customError",
-            statusCode: 400,
-            status: "bad request",
-            message: "This fields are already registerd",
-            fields: error.keyValue,
-        }
+        let errors = [];
+
+        Object.keys(error.keyValue).forEach((key) => {
+            const errMessage = `${key} ${error.keyValue[key]} is already exist`;
+            errors.push(errMessage);
+        });
+        const err = new AppError(
+            400,
+            "bad request",
+            "There is some problem with your request"
+        );
+        err.message = errors;
         next(err);
     } else if (err.name === "ValidationError") {
-
         // take all error to errors object
         let errors = {};
         Object.keys(err.errors).forEach((key) => {
@@ -159,7 +156,7 @@ const handleError = (error, doc, next) => {
             status: "bad request",
             message: "Please provide all required filed",
             errors: errors,
-        }
+        };
 
         next(err);
     } else {
@@ -167,16 +164,11 @@ const handleError = (error, doc, next) => {
     }
 };
 
-
 // add error handling middleware after operation
-simCardSchema.post('save', handleError);
-simCardSchema.post('update', handleError);
-simCardSchema.post('findOneAndUpdate', handleError);
-simCardSchema.post('insertMany', handleError);
-
-
-
-
+simCardSchema.post("save", handleError);
+simCardSchema.post("update", handleError);
+simCardSchema.post("findOneAndUpdate", handleError);
+simCardSchema.post("insertMany", handleError);
 
 const SimCard = mongoose.model("SimCard", simCardSchema);
 module.exports = SimCard;
