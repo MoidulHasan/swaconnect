@@ -168,40 +168,18 @@ auth.signup = async(req, res, next) => {
             next(err);
         }
     } catch (err) {
-        // console.log(err);
-        let response = {};
-        if (err.code === 11000) {
-            let errors = [];
-
-            Object.keys(err.keyValue).forEach((key) => {
-                const errMessage = `${key} ${err.keyValue[key]} is already exist`;
-                errors.push(errMessage);
-            });
-            if (errors.length > 0) {
-                response = new AppError(
-                    400,
-                    "bad request",
-                    "There is some problem with your request"
-                );
-                response.message = errors;
-            }
-        } else if (err.name === "ValidationError") {
-            response = new AppError(
-                400,
-                "bad request",
-                "There is some problem with your request"
-            );
-            response.message = err.message;
+        if (err.name === "AppError") {
+            err.name = undefined;
+            next(err);
         } else {
-            logger.error(err);
-            response = new AppError(
+            logger.error(err.errors);
+            const error = new AppError(
                 500,
                 "Server Error",
                 "There is an internal server error, please try again letter"
             );
+            next(error);
         }
-
-        next(response);
     }
 };
 

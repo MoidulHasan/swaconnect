@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const AppError = require("../../controllers/error/appError");
 
 const userSchema = new mongoose.Schema({
     fullName: {
@@ -81,39 +82,45 @@ userSchema.methods.correctPassword = async function(
 
 // error handling middleware
 const handleError = (error, doc, next) => {
-    if (error.code === 11000) {
-        let errors = [];
+    let output;
+    if (error) {
+        if (error.code === 11000) {
+            let errors = [];
 
-        Object.keys(error.keyValue).forEach((key) => {
-            const errMessage = `${key} ${error.keyValue[key]} is already exist`;
-            errors.push(errMessage);
-        });
-        const err = new AppError(
-            400,
-            "bad request",
-            "There is some problem with your request"
-        );
-        err.message = errors;
-        next(err);
-    } else if (err.name === "ValidationError") {
-        // take all error to errors object
-        let errors = {};
-        Object.keys(err.errors).forEach((key) => {
-            errors[key] = err.errors[key].message;
-        });
+            Object.keys(error.keyValue).forEach((key) => {
+                const errMessage = `${key} ${error.keyValue[key]} is already exist`;
+                errors.push(errMessage);
+            });
+            output = new AppError(
+                400,
+                "bad request",
+                "There is some problem with your request"
+            );
+            output.message = errors;
+            output.name = "AppError";
+        } else if (error.name === "ValidationError") {
+            // take all error to errors object
+            let errors = {};
+            Object.keys(error.errors).forEach((key) => {
+                errors[key] = error.errors[key].message;
+            });
 
-        const err = {
-            name: "customError",
-            statusCode: 400,
-            status: "bad request",
-            message: "Please provide all required filed",
-            errors: errors,
-        };
-
-        next(err);
+            output = new AppError(
+                400,
+                "bad request",
+                "Please provide all required filed"
+            );
+            output.filed = errors;
+            output.name = "AppError";
+        } else {
+            output = new AppError(400, "bad request", "You have problem with input");
+            output.name = "AppError";
+        }
     } else {
-        next();
+        output = doc;
     }
+    // console.log(output);
+    next(output);
 };
 
 // add error handling middleware after operation
