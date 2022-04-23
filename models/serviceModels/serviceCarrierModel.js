@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
-
 // schema schafolding
 const serviceCarrierSchema = mongoose.Schema({
     id: {
@@ -45,13 +44,18 @@ const serviceCarrierSchema = mongoose.Schema({
         required: [true, "service carrear contact email is required"],
         unique: true,
         lowercase: true,
-        validate: [validator.isEmail, " Please provide a valid service carrear contact email"],
+        validate: [
+            validator.isEmail,
+            " Please provide a valid service carrear contact email",
+        ],
     },
-    files: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "File",
-        select: false,
-    }],
+    files: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "File",
+            select: false,
+        },
+    ],
     apiUserName: {
         type: String,
         required: [true, "API user name is required"],
@@ -72,11 +76,13 @@ const serviceCarrierSchema = mongoose.Schema({
         required: [true, "API pin is required"],
         select: false,
     },
-    notes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Note",
-        select: true,
-    }],
+    notes: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Note",
+            select: true,
+        },
+    ],
     status: {
         type: String,
         enum: ["Active", "Inactive"],
@@ -102,14 +108,51 @@ const serviceCarrierSchema = mongoose.Schema({
         lowercase: true,
         validate: [validator.isEmail, "Please provide a valid email"],
     },
-    phonePlans: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "PhonePlan",
-    }]
+    phonePlans: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "PhonePlan",
+        },
+    ],
 });
 
+const encryptor = async (next) => {
+    // check the password if it is modified
+    if (
+        !this.isModified("apiUserName") &&
+        !this.isModified("apiUserName") &&
+        !this.isModified("apiUserName") &&
+        !this.isModified("apiUserName")
+    ) {
+        return next();
+    }
+
+    // Hashing API crediantials
+    this.apiUserName = await bcrypt.hash(this.apiUserName, 12);
+    this.apiTokenPassword = await bcrypt.hash(this.apiTokenPassword, 12);
+    this.clecid = await bcrypt.hash(this.clecid, 12);
+    this.apiPin = await bcrypt.hash(this.apiPin, 12);
+
+    next();
+};
 
 
+const decryptor = async (error, doc, next) => {
+
+    if (error) {
+        return next();
+    } else {
+        // Hashing API crediantials
+        this.apiUserName = await bcrypt.hash(this.apiUserName, 12);
+        this.apiTokenPassword = await bcrypt.hash(this.apiTokenPassword, 12);
+        this.clecid = await bcrypt.hash(this.clecid, 12);
+        this.apiPin = await bcrypt.hash(this.apiPin, 12);
+
+        next();
+    }
+
+
+};
 
 
 // error handling middleware
@@ -124,10 +167,9 @@ const handleError = (error, doc, next) => {
             status: "bad request",
             message: "This fields are already registerd",
             fields: error.keyValue,
-        }
+        };
         next(err);
     } else if (err.name === "ValidationError") {
-
         // take all error to errors object
         let errors = {};
         Object.keys(err.errors).forEach((key) => {
@@ -140,7 +182,7 @@ const handleError = (error, doc, next) => {
             status: "bad request",
             message: "Please provide all required filed",
             errors: errors,
-        }
+        };
 
         next(err);
     } else {
@@ -148,16 +190,18 @@ const handleError = (error, doc, next) => {
     }
 };
 
+// add encryptor as pre middleware
+serviceCarrierSchema.pre("save", encryptor);
+serviceCarrierSchema.pre("update", encryptor);
+serviceCarrierSchema.pre("findOneAndUpdate", encryptor);
+serviceCarrierSchema.pre("insertMany", encryptor);
 
 // add error handling middleware after operation
-serviceCarrierSchema.post('save', handleError);
-serviceCarrierSchema.post('update', handleError);
-serviceCarrierSchema.post('findOneAndUpdate', handleError);
-serviceCarrierSchema.post('insertMany', handleError);
-
-
-
-
+serviceCarrierSchema.post("save", [handleError,]);
+serviceCarrierSchema.post("update", [handleError]);
+serviceCarrierSchema.post("findOne", [handleError]);
+serviceCarrierSchema.post("findOneAndUpdate", [handleError]);
+serviceCarrierSchema.post("insertMany", [handleError]);
 
 // export model
 const serviceCarrier = mongoose.model("serviceCarrier", serviceCarrierSchema);
