@@ -30,7 +30,7 @@ utils.isEmailValid = (email) => {
         return false;
 
     var domainParts = parts[1].split(".");
-    if (domainParts.some(function(part) { return part.length > 63; }))
+    if (domainParts.some(function (part) { return part.length > 63; }))
         return false;
 
     return true;

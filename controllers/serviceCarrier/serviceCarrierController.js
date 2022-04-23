@@ -1,5 +1,6 @@
 // dependencies
-const ServiceCarrier = require("../../models/serviceModels/serviceCarrierModel")
+const ServiceCarrier = require("../../models/serviceModels/serviceCarrierModel");
+const Encrypter = require("../../utilities/crpyto");
 const AppError = require("../error/appError");
 
 // module scafolding
@@ -7,10 +8,10 @@ const serviceCarrier = {};
 
 
 // add service carrier data
-serviceCarrier.add = async(req, res, next) => {
+serviceCarrier.add = async (req, res, next) => {
 
     // take service carrier data form the request body
-    const serviceCarrier = typeof(req.body.serviceCarrier) === "object" ? req.body.serviceCarrier : false;
+    const serviceCarrier = typeof (req.body.serviceCarrier) === "object" ? req.body.serviceCarrier : false;
 
 
     // check if service carrier data is present or not
@@ -22,8 +23,25 @@ serviceCarrier.add = async(req, res, next) => {
             if (lastId) {
                 // add new id to sim card data
                 let newId = parseInt(lastId.id) + 1;
-                serviceCarrier.id = typeof(newId) === "number" ? newId : false;
+                serviceCarrier.id = typeof (newId) === "number" ? newId : false;
             }
+
+            // encrypt service carier crediantials
+            const encrypter = new Encrypter("secret");
+
+            console.log(serviceCarrier.apiUserName);
+
+            serviceCarrier.apiUserName = encrypter.encrypt(serviceCarrier.apiUserName);
+            serviceCarrier.apiTokenPassword = encrypter.encrypt(serviceCarrier.apiTokenPassword);
+            serviceCarrier.clecid = encrypter.encrypt(serviceCarrier.clecid);
+            serviceCarrier.apiPin = encrypter.encrypt(serviceCarrier.apiPin);
+
+            // serviceCarrier.apiTokenPassword = await encrypt(serviceCarrier.apiTokenPassword);
+            // serviceCarrier.clecid = await encrypt(serviceCarrier.clecid);
+            // serviceCarrier.apiPin = await encrypt(serviceCarrier.apiPin);
+
+            console.log(serviceCarrier);
+
 
             const newServiceCarrier = await ServiceCarrier.create(serviceCarrier);
 
@@ -63,13 +81,13 @@ serviceCarrier.add = async(req, res, next) => {
 
 
 // view service carrier data
-serviceCarrier.view = async(req, res, next) => {
+serviceCarrier.view = async (req, res, next) => {
 
     // console.log(req.query);
 
     if (Object.keys(req.query).length !== 0) {
         // take service carrier id form the request query
-        const serviceCarrierId = typeof(req.query.id) === "string" && req.query.id > 0 ? req.query.id : false;
+        const serviceCarrierId = typeof (req.query.id) === "string" && req.query.id > 0 ? req.query.id : false;
 
         // find service carrier data by id
         try {
@@ -118,13 +136,13 @@ serviceCarrier.view = async(req, res, next) => {
 
 
 // update service carrier data
-serviceCarrier.update = async(req, res, next) => {
+serviceCarrier.update = async (req, res, next) => {
     // take service carrier id form the request query
-    const serviceCarrierId = typeof(req.body.serviceCarrier.id) === "number" && req.body.serviceCarrier.id > 0 ? req.body.serviceCarrier.id : false;
+    const serviceCarrierId = typeof (req.body.serviceCarrier.id) === "number" && req.body.serviceCarrier.id > 0 ? req.body.serviceCarrier.id : false;
     // console.log(typeof req.body.serviceCarrier.id);
 
     // take service carrier data from the request body and make id undefined
-    const serviceCarrierData = typeof(req.body.serviceCarrier) === "object" ? req.body.serviceCarrier : false;
+    const serviceCarrierData = typeof (req.body.serviceCarrier) === "object" ? req.body.serviceCarrier : false;
 
     // find service carrier data by id
     try {
@@ -149,7 +167,7 @@ serviceCarrier.update = async(req, res, next) => {
 
 
 // remove service carrier data
-serviceCarrier.remove = async(req, res, next) => {
+serviceCarrier.remove = async (req, res, next) => {
     // take service carrier id form the request query
     const serviceCarrierId = req.query.id;
 

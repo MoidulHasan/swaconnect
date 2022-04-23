@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
+
 // schema schafolding
 const serviceCarrierSchema = mongoose.Schema({
     id: {
@@ -116,50 +117,16 @@ const serviceCarrierSchema = mongoose.Schema({
     ],
 });
 
-const encryptor = async (next) => {
-    // check the password if it is modified
-    if (
-        !this.isModified("apiUserName") &&
-        !this.isModified("apiUserName") &&
-        !this.isModified("apiUserName") &&
-        !this.isModified("apiUserName")
-    ) {
-        return next();
-    }
-
-    // Hashing API crediantials
-    this.apiUserName = await bcrypt.hash(this.apiUserName, 12);
-    this.apiTokenPassword = await bcrypt.hash(this.apiTokenPassword, 12);
-    this.clecid = await bcrypt.hash(this.clecid, 12);
-    this.apiPin = await bcrypt.hash(this.apiPin, 12);
-
-    next();
-};
 
 
-const decryptor = async (error, doc, next) => {
 
-    if (error) {
-        return next();
-    } else {
-        // Hashing API crediantials
-        this.apiUserName = await bcrypt.hash(this.apiUserName, 12);
-        this.apiTokenPassword = await bcrypt.hash(this.apiTokenPassword, 12);
-        this.clecid = await bcrypt.hash(this.clecid, 12);
-        this.apiPin = await bcrypt.hash(this.apiPin, 12);
-
-        next();
-    }
-
-
-};
 
 
 // error handling middleware
 const handleError = (error, doc, next) => {
     // console.log(Object.keys(error));
 
-    console.log("error new: ", error.keyValue);
+    console.log("error new: ", error);
     if (error.code === 11000) {
         const err = {
             name: "customError",
@@ -190,18 +157,14 @@ const handleError = (error, doc, next) => {
     }
 };
 
-// add encryptor as pre middleware
-serviceCarrierSchema.pre("save", encryptor);
-serviceCarrierSchema.pre("update", encryptor);
-serviceCarrierSchema.pre("findOneAndUpdate", encryptor);
-serviceCarrierSchema.pre("insertMany", encryptor);
+
 
 // add error handling middleware after operation
-serviceCarrierSchema.post("save", [handleError,]);
-serviceCarrierSchema.post("update", [handleError]);
-serviceCarrierSchema.post("findOne", [handleError]);
-serviceCarrierSchema.post("findOneAndUpdate", [handleError]);
-serviceCarrierSchema.post("insertMany", [handleError]);
+serviceCarrierSchema.post("save", handleError);
+serviceCarrierSchema.post("update", handleError);
+serviceCarrierSchema.post("findOne", handleError);
+serviceCarrierSchema.post("findOneAndUpdate", handleError);
+serviceCarrierSchema.post("insertMany", handleError);
 
 // export model
 const serviceCarrier = mongoose.model("serviceCarrier", serviceCarrierSchema);
