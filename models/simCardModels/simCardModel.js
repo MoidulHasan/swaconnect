@@ -18,6 +18,11 @@ const simCardSchema = new mongoose.Schema({
         unique: true,
         validate: customValidator.isNonZeroLengthString,
     },
+    serviceCarrier: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "servicecarrier",
+        select: false,
+    },
     PUK1: {
         type: String,
         required: [true, "Please fill PUK1 id"],
@@ -119,12 +124,12 @@ const simCardSchema = new mongoose.Schema({
         ref: "SimOperationsLog",
         // required: true,
         select: false,
-    }, ],
+    },],
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Notes",
         select: false,
-    }, ],
+    },],
 });
 
 // error handling middleware

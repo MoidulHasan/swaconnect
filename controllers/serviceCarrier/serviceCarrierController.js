@@ -27,7 +27,7 @@ serviceCarrier.add = async (req, res, next) => {
             }
 
             // encrypt service carier crediantials
-            const encrypter = new Encrypter("secret");
+            const encrypter = new Encrypter(process.env.SECRET_KEY);
 
             console.log(serviceCarrier.apiUserName);
 
@@ -35,12 +35,6 @@ serviceCarrier.add = async (req, res, next) => {
             serviceCarrier.apiTokenPassword = encrypter.encrypt(serviceCarrier.apiTokenPassword);
             serviceCarrier.clecid = encrypter.encrypt(serviceCarrier.clecid);
             serviceCarrier.apiPin = encrypter.encrypt(serviceCarrier.apiPin);
-
-            // serviceCarrier.apiTokenPassword = await encrypt(serviceCarrier.apiTokenPassword);
-            // serviceCarrier.clecid = await encrypt(serviceCarrier.clecid);
-            // serviceCarrier.apiPin = await encrypt(serviceCarrier.apiPin);
-
-            console.log(serviceCarrier);
 
 
             const newServiceCarrier = await ServiceCarrier.create(serviceCarrier);
