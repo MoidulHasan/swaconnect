@@ -19,7 +19,7 @@ simCardOperations.GetCoverage2 = async (req, res, next) => {
 
             // get coverage data
             const coverageData = await communication321.getCoverage2(zipCode);
-            console.log("coverage data: ", coverageData);
+            // console.log("coverage data: ", coverageData);
 
             if (coverageData.data) {
                 res.status(200).json({

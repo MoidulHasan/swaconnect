@@ -1,6 +1,7 @@
 // dependencies
 const mongoose = require("mongoose");
 const customValidator = require("../../utilities/validator");
+const AppError = require("../../controllers/error/appError");
 
 // Define sim card schema
 const simCardSchema = new mongoose.Schema({
@@ -20,6 +21,7 @@ const simCardSchema = new mongoose.Schema({
     },
     serviceCarrier: {
         type: mongoose.Schema.Types.ObjectId,
+        required: [true, "Service Carrier Id is Required"],
         ref: "servicecarrier",
         select: false,
     },
@@ -52,12 +54,13 @@ const simCardSchema = new mongoose.Schema({
         type: String,
         // required: [true, "SIM Card MDN Required"],
         select: true,
-        unique: true,
+        unique: false,
     },
     userName: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        // required: [true, "SIM Card User Name Required"],
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: "User",
+        type: String,
+        required: [true, "User Name Required"],
     },
     vendor: {
         type: mongoose.Schema.Types.ObjectId,
@@ -134,6 +137,7 @@ const simCardSchema = new mongoose.Schema({
 
 // error handling middleware
 const handleError = (error, doc, next) => {
+    console.log(error)
     if (error.code === 11000) {
         let errors = [];
 
@@ -148,11 +152,11 @@ const handleError = (error, doc, next) => {
         );
         err.message = errors;
         next(err);
-    } else if (err.name === "ValidationError") {
+    } else if (error.name === "ValidationError") {
         // take all error to errors object
         let errors = {};
-        Object.keys(err.errors).forEach((key) => {
-            errors[key] = err.errors[key].message;
+        Object.keys(error.errors).forEach((key) => {
+            errors[key] = error.errors[key].message;
         });
 
         const err = {
