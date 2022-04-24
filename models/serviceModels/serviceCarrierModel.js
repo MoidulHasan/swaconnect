@@ -124,9 +124,7 @@ const serviceCarrierSchema = mongoose.Schema({
 
 // error handling middleware
 const handleError = (error, doc, next) => {
-    // console.log(Object.keys(error));
 
-    console.log("error new: ", error);
     if (error.code === 11000) {
         const err = {
             name: "customError",

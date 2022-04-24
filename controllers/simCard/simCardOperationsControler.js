@@ -19,23 +19,28 @@ simCardOperations.GetCoverage2 = async (req, res, next) => {
 
             // get coverage data
             const coverageData = await communication321.getCoverage2(zipCode);
-            // console.log("coverage data: ", coverageData);
+            console.log("coverage data: ", coverageData);
 
-            if (coverageData) {
+            if (coverageData.data) {
                 res.status(200).json({
                     status: "success",
-                    data: coverageData,
-                });
-            } else {
-                res.status(500).json({
-                    status: "server error",
-                    message: "there is an internal server error",
+                    IsActivationEligible: coverageData.data.IsActivationEligible,
                 });
             }
-
+            else if(coverageData)
+            {
+                res.status(500).json(coverageData);
+            }
+            else {
+                res.status(200).json({
+                    status: "server error",
+                    message: "There is an internal server error",
+                });
+            }
         }
     } else {
         const err = new AppError(400, "bad request", "please provide valied zipcode and ssid");
+        next(err);
     }
 };
 

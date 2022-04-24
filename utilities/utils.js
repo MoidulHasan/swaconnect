@@ -45,8 +45,6 @@ utils.dateNow = () => {
     const currentYear = currentDate.getFullYear();
 
     const dateString = currentDayOfMonth + "-" + (currentMonth + 1) + "-" + currentYear;
-    // "27-11-2020"
-    // console.log(dateString);
     return dateString;
 };
 

@@ -19,6 +19,7 @@ communication321.carrierData = async () => {
 
 // fetch coverage by zip code
 const fetchCoverage2 = async (data) => {
+    let output ;
     // fetch data from the getCoverage api url
     await fetch('http://wirelssapi.321communications.com/API/GetCoverage2', {
         method: 'POST',
@@ -27,13 +28,28 @@ const fetchCoverage2 = async (data) => {
     })
         .then((result) => result.json())
         .then((data) => {
-            // console.log(data);
             if (data) {
-                return data;
+                output =  {
+                    status: "success",
+                    data: data
+                };
+            }
+            else{
+                output = {
+                    status: "fail",
+                    message: "fail to fetch data from the service carrier"
+                }
             }
         }).catch((error) => {
-            return false;
+            if(error){
+                output =  {
+                    status: "server error",
+                    message: "fail to fetch data from the service carrier"
+                }
+            }
         });
+
+        return output;
 }
 
 
@@ -57,11 +73,10 @@ communication321.getCoverage2 = async (zipcode) => {
 
 
     const coverage = await fetchCoverage2(postData);
-    // console.log(coverage)
 
-    // return coverage data
+    // const coverageObj = JSON.parse(coverage);
+
     return coverage;
-
 }
 
 
