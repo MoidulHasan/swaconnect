@@ -16,47 +16,47 @@ simCardControlers.add = async (req, res, next) => {
     // validate sim card data
     const SSID =
       typeof req.body.simCardData.SSID === "string" &&
-      req.body.simCardData.SSID.length > 0
+        req.body.simCardData.SSID.length > 0
         ? req.body.simCardData.SSID
         : false;
     const PUK1 =
       typeof req.body.simCardData.PUK1 === "string" &&
-      req.body.simCardData.PUK1.length > 0
+        req.body.simCardData.PUK1.length > 0
         ? req.body.simCardData.PUK1
         : false;
     const compatibility =
       typeof req.body.simCardData.compatibility === "string" &&
-      req.body.simCardData.compatibility.length > 0
+        req.body.simCardData.compatibility.length > 0
         ? req.body.simCardData.compatibility
         : false;
     const userName =
       typeof req.body.simCardData.userName === "string" &&
-      req.body.simCardData.userName.length > 0
+        req.body.simCardData.userName.length > 0
         ? req.body.simCardData.userName
         : false;
     const subscriberId =
       typeof req.body.simCardData.subscriberId === "string" &&
-      req.body.simCardData.subscriberId.length > 0
+        req.body.simCardData.subscriberId.length > 0
         ? req.body.simCardData.subscriberId
         : false;
     const vendorId =
       typeof req.body.simCardData.vendorId === "string" &&
-      req.body.simCardData.vendorId.length > 0
+        req.body.simCardData.vendorId.length > 0
         ? req.body.simCardData.vendorId
         : false;
     const createdDate =
       typeof req.body.simCardData.createdDate === "string" &&
-      req.body.simCardData.createdDate.length > 0
+        req.body.simCardData.createdDate.length > 0
         ? req.body.simCardData.createdDate
         : false;
     const simStatus =
       typeof req.body.simCardData.simStatus === "string" &&
-      req.body.simCardData.simStatus.length > 0
+        req.body.simCardData.simStatus.length > 0
         ? req.body.simCardData.simStatus
         : false;
     const physicalStatus =
       typeof req.body.simCardData.physicalStatus === "string" &&
-      req.body.simCardData.physicalStatus.length > 0
+        req.body.simCardData.physicalStatus.length > 0
         ? req.body.simCardData.physicalStatus
         : false;
 
@@ -137,7 +137,6 @@ simCardControlers.add = async (req, res, next) => {
 simCardControlers.addSingleSimCard = async (simCardData) => {
   let result = {};
   try {
-    console.log();
     // 1) check sim card already exist
     const simExistStatus = await SimCard.findOne({ SSID: simCardData.SSID });
 
@@ -157,7 +156,7 @@ simCardControlers.addSingleSimCard = async (simCardData) => {
         let newId = parseInt(lastId.id) + 1;
         simCardData.id = typeof newId === "number" ? newId : false;
       }
-      console.log(lastId);
+      // console.log(lastId);
 
       // 5) if sim card not exist then insert sim card data to database
       const newSimCart = await SimCard.create(simCardData);
@@ -202,5 +201,72 @@ simCardControlers.addSingleSimCard = async (simCardData) => {
   }
   return result;
 };
+
+
+
+
+// sim card data request controler
+simCardControlers.simCardData = async (req, res, next) => {
+  const id = typeof req.body.id === "number" ? req.body.id : false;
+  if (id) {
+    // console.log(req.body.id);
+
+    // find sim card data by sim card id
+    try {
+      const simData = await SimCard.findOne({ id: id });
+      // console.log(simData)
+
+      if (simData) {
+        // console.log(allSimData)
+        res.status(200).json({
+          status: "success",
+          data: simData
+        });
+      } else {
+        res.status(200).json({
+          status: "success",
+          data: null,
+          message: "no data found"
+        })
+      }
+
+    } catch (err) {
+      res.status(500).json({
+        status: "server error",
+        message: "there is an internal server error"
+      })
+      // console.log(err);
+    }
+  } else {
+    // find all sim card data and send with response
+    try {
+      const allSimData = await SimCard.find();
+      // console.log(allSimData)
+
+      if (allSimData.length > 0) {
+        // console.log(allSimData)
+        res.status(200).json({
+          status: "success",
+          data: allSimData
+        });
+      } else {
+        res.status(200).json({
+          status: "success",
+          data: null,
+          message: "no data found"
+        })
+      }
+
+    } catch (err) {
+      res.status(500).json({
+        status: "server error",
+        message: "there is an internal server error"
+      })
+      // console.log(err);
+    }
+  }
+};
+
+
 // Export Module
 module.exports = simCardControlers;
