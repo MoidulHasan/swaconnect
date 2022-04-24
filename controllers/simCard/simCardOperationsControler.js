@@ -17,11 +17,21 @@ simCardOperations.GetCoverage2 = async (req, res, next) => {
     if (serviceCarrierId && zipCode) {
         if (serviceCarrierId === 101) {
 
-            const serviceCarrier = communication321;
-
             // get coverage data
-            const coverageData = await serviceCarrier.getCoverage2(zipCode);
-            console.log(coverageData);
+            const coverageData = await communication321.getCoverage2(zipCode);
+            // console.log("coverage data: ", coverageData);
+
+            if (coverageData) {
+                res.status(200).json({
+                    status: "success",
+                    data: coverageData,
+                });
+            } else {
+                res.status(500).json({
+                    status: "server error",
+                    message: "there is an internal server error",
+                });
+            }
 
         }
     } else {
