@@ -54,7 +54,7 @@ const simCardSchema = new mongoose.Schema({
         type: String,
         // required: [true, "SIM Card MDN Required"],
         select: true,
-        unique: false,
+        // unique: false,
     },
     userName: {
         // type: mongoose.Schema.Types.ObjectId,
