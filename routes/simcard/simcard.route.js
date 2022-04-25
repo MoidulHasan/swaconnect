@@ -18,6 +18,10 @@ router
     .route('/add')
     .post(add);
 
+router
+    .route('/add')
+    .post(add);
+
 
 // route handler for sim card operations route
 router.use("/operation", simCardOperationRoute);

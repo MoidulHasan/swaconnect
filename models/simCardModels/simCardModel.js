@@ -19,6 +19,11 @@ const simCardSchema = new mongoose.Schema({
         unique: true,
         validate: customValidator.isNonZeroLengthString,
     },
+    ESN: {
+        type: String,
+        select: true,
+        validate: customValidator.isNonZeroLengthString,
+    },
     serviceCarrier: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, "Service Carrier Id is Required"],
@@ -55,6 +60,7 @@ const simCardSchema = new mongoose.Schema({
         // required: [true, "SIM Card MDN Required"],
         select: true,
         // unique: false,
+        validate: customValidator.isNonZeroLengthString,
     },
     userName: {
         // type: mongoose.Schema.Types.ObjectId,

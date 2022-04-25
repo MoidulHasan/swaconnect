@@ -3,6 +3,7 @@ const { dateNow } = require("../../utilities/utils");
 const SimCardModal = require("../../models/simCardModels/simCardModel");
 const AppError = require("../../controllers/error/appError");
 const logger = require("../../utilities/logger");
+const ObjectId = require('mongodb').ObjectId;
 
 
 // module scafolding
@@ -31,7 +32,7 @@ helpers.addSimCard = async (simData) => {
             : false;
     const vendorId =
         typeof simData.vendorId === "string" && simData.vendorId.length > 0
-            ? simData.vendorId
+            ? ObjectId(simData.vendorId)
             : false;
     const compatibility =
         typeof simData.compatibility === "string" &&
@@ -139,6 +140,118 @@ helpers.addSimCard = async (simData) => {
     // return output
     return output;
 };
+
+
+// update sim card data
+helpers.updateSimCard = async (simData) => {
+    const updateData = {};
+
+    // include ssid to be updated if valid
+    // if(typeof simData.ssid === "string" && simData.ssid.length >0) 
+    //  updateData.ssid = simData.ssid;
+
+    // include ESN if valid
+    if (typeof simData.ESN === "string" && simData.ESN.length > 0)
+        updateData.ESN = simData.ESN;
+
+
+    // include serviceCarrier if valid
+    if (typeof simData.serviceCarrier === "string" && simData.serviceCarrier.length > 0)
+        updateData.serviceCarrier = ObjectId(simData.serviceCarrier);
+
+
+    // include PUK1 if valid
+    if (typeof simData.PUK1 === "string" && simData.PUK1.length > 0)
+        updateData.PUK1 = simData.PUK1;
+
+
+    // include simStatus and status date if valid
+    if (typeof simData.simStatus === "string" && simData.simStatus.length > 0) {
+        updateData.simStatus = simData.simStatus;
+        updateData.statusDate = Date.now("dd/mm/yyyy");
+    }
+
+
+    // include MDN if valid
+    if (typeof simData.MDN === "string" && simData.MDN.length > 0)
+        updateData.MDN = simData.MDN;
+
+
+
+    // include userName if valid
+    if (typeof simData.userName === "string" && simData.userName.length > 0)
+        updateData.userName = simData.userName;
+
+
+    // include vendor if valid
+    if (typeof simData.vendor === "string" && simData.vendor.length > 0)
+        updateData.vendor = ObjectId(simData.vendor);
+
+
+    // include orderNumber if valid
+    if (typeof simData.orderNumber === "string" && simData.orderNumber.length > 0)
+        updateData.orderNumber = ObjectId(simData.orderNumber);
+
+
+    // include compatibility if valid
+    if (typeof simData.compatibility === "string" && simData.compatibility.length > 0)
+        updateData.compatibility = simData.compatibility;
+
+
+
+    // include SimOperations if valid
+    if (typeof simData.SimOperations === "string" && simData.SimOperations.length > 0)
+        updateData.SimOperations = ObjectId(simData.SimOperations);
+
+
+
+    // include physicalStatus if valid
+    if (typeof simData.physicalStatus === "string" && simData.physicalStatus.length > 0)
+        updateData.physicalStatus = simData.physicalStatus;
+
+
+    // include distributor if valid
+    if (typeof simData.distributor === "string" && simData.distributor.length > 0)
+        updateData.distributor = ObjectId(simData.distributor);
+
+
+    // include agent if valid
+    if (typeof simData.agent === "string" && simData.agent.length > 0)
+        updateData.agent = ObjectId(simData.agent);
+
+
+    // include customerId if valid
+    if (typeof simData.customerId === "string" && simData.customerId.length > 0)
+        updateData.customerId = ObjectId(simData.customerId);
+
+
+    // include phonePlan if valid
+    if (typeof simData.phonePlan === "string" && simData.phonePlan.length > 0)
+        updateData.phonePlan = ObjectId(simData.phonePlan);
+
+
+    // include returns if valid
+    if (typeof simData.returns === "string" && simData.returns.length > 0)
+        updateData.returns = ObjectId(simData.returns);
+
+
+    // include simOperationsLog if valid
+    if (typeof simData.simOperationsLog === "string" && simData.simOperationsLog.length > 0)
+        updateData.simOperationsLog = ObjectId(simData.simOperationsLog);
+
+
+
+    // include simOperationsLog if valid
+    if (typeof simData.notes === "string" && simData.notes.length > 0)
+        updateData.notes = ObjectId(simData.notes);
+
+    console.log(updateData);
+
+
+};
+
+
+
 
 // export module
 module.exports = helpers;

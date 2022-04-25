@@ -30,10 +30,10 @@ serviceCarrier.add = async (req, res, next) => {
             const encrypter = new Encrypter(process.env.SECRET_KEY);
 
 
-            serviceCarrier.apiUserName = encrypter.encrypt(serviceCarrier.apiUserName);
-            serviceCarrier.apiTokenPassword = encrypter.encrypt(serviceCarrier.apiTokenPassword);
-            serviceCarrier.clecid = encrypter.encrypt(serviceCarrier.clecid);
-            serviceCarrier.apiPin = encrypter.encrypt(serviceCarrier.apiPin);
+            serviceCarrier.apiUserName = await encrypter.encrypt(serviceCarrier.apiUserName);
+            serviceCarrier.apiTokenPassword = await encrypter.encrypt(serviceCarrier.apiTokenPassword);
+            serviceCarrier.clecid = await encrypter.encrypt(serviceCarrier.clecid);
+            serviceCarrier.apiPin = await encrypter.encrypt(serviceCarrier.apiPin);
 
 
             const newServiceCarrier = await ServiceCarrier.create(serviceCarrier);
@@ -61,7 +61,7 @@ serviceCarrier.add = async (req, res, next) => {
                 const error = new AppError(500, "Server Error", "There is an internal server error, please try again letter");
 
                 // send error response
-                next(err)
+                next(error)
             }
         }
     } else {

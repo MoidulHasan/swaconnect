@@ -28,7 +28,7 @@ simCardOperations.GetCoverage2 = async (req, res, next) => {
                     IsActivationEligible: coverageData.data.IsActivationEligible,
                 });
             }
-            else if (coverageData) {
+            else if (!coverageData.data) {
                 res.status(500).json(coverageData);
             }
             else {
@@ -66,6 +66,28 @@ simCardOperations.ActivateSubscriber = async (req, res, next) => {
 
         // select service carrier data
         if (serviceCarrierId == 101) {
+            // active sim card for 321 communication
+            const activeSim = await communication321.activeSimCard(simData);
+
+            if (activeSim.data) {
+                if (activeSim.data.status === "successs" && activeSim.data.MDN && activeSim.data.ESN && !activeSim.data.ErrorMessage) {
+
+                } else {
+                    res.status(500).json({
+                        status: "server error",
+                        message: "There is some error on service carrier server",
+                    });
+                }
+            }
+            else if (!activeSim.data) {
+                res.status(500).json(coverageData);
+            }
+            else {
+                res.status(200).json({
+                    status: "server error",
+                    message: "There is an internal server error",
+                });
+            }
 
         }
         else {

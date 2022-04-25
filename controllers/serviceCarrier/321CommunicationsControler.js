@@ -17,6 +17,7 @@ communication321.carrierData = async () => {
     return await serviceCarrier.serviceCarrierData(101);
 };
 
+
 // fetch coverage by zip code
 const fetchData = async (data, url) => {
     let output;
@@ -75,9 +76,6 @@ communication321.getCoverage2 = async (zipcode) => {
 
     const coverage = await fetchData(postData, url);
 
-    // const coverageObj = JSON.parse(coverage);
-
-    // console.log(coverage);
 
     return coverage;
 }
@@ -102,8 +100,14 @@ communication321.activeSimCard = async (simData) => {
         Plan: simData.planCode
     }
 
+    // activation api url
+    const url = 'http://wirelssapi.321communications.com/API/ActivateSubscriberDevice';
 
+    const activatedSim = fetchData(postData, url);
 
+    // console.log(activatedSim);
+
+    return activatedSim;
 };
 
 // export module
