@@ -15,6 +15,7 @@ simCardOperations.GetCoverage2 = async (req, res, next) => {
 
     // check if ssid and zip code is valied
     if (serviceCarrierId && zipCode) {
+        // get coverage for 321 communication
         if (serviceCarrierId === 101) {
 
             // get coverage data
@@ -27,8 +28,7 @@ simCardOperations.GetCoverage2 = async (req, res, next) => {
                     IsActivationEligible: coverageData.data.IsActivationEligible,
                 });
             }
-            else if(coverageData)
-            {
+            else if (coverageData) {
                 res.status(500).json(coverageData);
             }
             else {
@@ -37,6 +37,9 @@ simCardOperations.GetCoverage2 = async (req, res, next) => {
                     message: "There is an internal server error",
                 });
             }
+        } else {
+            const err = new AppError(400, "bad request", "please provide valied service carrier id");
+            next(err);
         }
     } else {
         const err = new AppError(400, "bad request", "please provide valied zipcode and ssid");
@@ -44,6 +47,39 @@ simCardOperations.GetCoverage2 = async (req, res, next) => {
     }
 };
 
+
+simCardOperations.ActivateSubscriber = async (req, res, next) => {
+    // validate input data for activating a sim card
+    const zipCode = typeof req.body.zipCode === "string" && req.body.zipCode.length > 0 ? req.body.zipCode : false;
+    const ssid = typeof req.body.ssid === "string" && req.body.zipCode.length > 0 ? req.body.ssid : false;
+    const planCode = typeof req.body.planCode === "number" ? req.body.planCode : false;
+    const serviceCarrierId = typeof req.body.serviceCarrierId === "number" ? req.body.serviceCarrierId : false;
+
+
+    // check if all required data is available
+    if (zipCode && ssid && planCode && serviceCarrierId) {
+        const simData = {
+            zipCode,
+            ssid,
+            planCode
+        }
+
+        // select service carrier data
+        if (serviceCarrierId == 101) {
+
+        }
+        else {
+            const err = new AppError(400, "bad request", "please provide valied service carrier id");
+            next(err);
+        }
+
+    }
+    else {
+        const err = new AppError(400, "bad request", "please provide valied zipcode, ssid, Plan Code and Service carrier id");
+        next(err);
+    }
+
+}
 
 
 // export module

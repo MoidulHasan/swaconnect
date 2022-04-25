@@ -18,10 +18,10 @@ communication321.carrierData = async () => {
 };
 
 // fetch coverage by zip code
-const fetchCoverage2 = async (data) => {
-    let output ;
+const fetchData = async (data, url) => {
+    let output;
     // fetch data from the getCoverage api url
-    await fetch('http://wirelssapi.321communications.com/API/GetCoverage2', {
+    await fetch(url, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: { 'Content-Type': 'application/json' }
@@ -29,27 +29,27 @@ const fetchCoverage2 = async (data) => {
         .then((result) => result.json())
         .then((data) => {
             if (data) {
-                output =  {
+                output = {
                     status: "success",
                     data: data
                 };
             }
-            else{
+            else {
                 output = {
                     status: "fail",
                     message: "fail to fetch data from the service carrier"
                 }
             }
         }).catch((error) => {
-            if(error){
-                output =  {
+            if (error) {
+                output = {
                     status: "server error",
                     message: "fail to fetch data from the service carrier"
                 }
             }
         });
 
-        return output;
+    return output;
 }
 
 
@@ -71,14 +71,40 @@ communication321.getCoverage2 = async (zipcode) => {
         Zip: zipcode
     }
 
+    const url = 'http://wirelssapi.321communications.com/API/GetCoverage2';
 
-    const coverage = await fetchCoverage2(postData);
+    const coverage = await fetchData(postData, url);
 
     // const coverageObj = JSON.parse(coverage);
+
+    // console.log(coverage);
 
     return coverage;
 }
 
+
+// active sim card
+communication321.activeSimCard = async (simData) => {
+    // find service carrier data from database
+    let carrierData = await communication321.carrierData();
+    carrierData = carrierData.data;
+
+    // construct post data with dencrypted Crediantials and zipcode
+    const postData = {
+        Credential: {
+            CLECID: await encrypter.dencrypt(data.clecid),
+            UserName: await encrypter.dencrypt(data.apiUserName),
+            TokenPassword: await encrypter.dencrypt(data.apiTokenPassword),
+            PIN: await encrypter.dencrypt(data.apiPin),
+        },
+        SIM: simData.ssid,
+        Zip: simData.zipcode,
+        Plan: simData.planCode
+    }
+
+
+
+};
 
 // export module
 module.exports = communication321;

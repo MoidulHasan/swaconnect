@@ -58,7 +58,9 @@ helpers.addSimCard = async (simData) => {
             userName,
             serviceCarrier,
             compatibility,
-            physicalStatus
+            physicalStatus,
+            vendorId,
+            orderNumber
         }
 
         // insert sim card data to database
