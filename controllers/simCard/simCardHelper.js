@@ -28,7 +28,7 @@ helpers.addSimCard = async (simData) => {
             : false;
     const serviceCarrier =
         typeof simData.serviceCarrier === "string" && simData.serviceCarrier.length > 0
-            ? simData.serviceCarrier
+            ? ObjectId(simData.serviceCarrier)
             : false;
     const vendorId =
         typeof simData.vendorId === "string" && simData.vendorId.length > 0
@@ -47,7 +47,7 @@ helpers.addSimCard = async (simData) => {
     const orderNumber =
         typeof simData.orderNumber === "string" &&
             simData.orderNumber.length > 0
-            ? simData.orderNumber
+            ? ObjectId(simData.orderNumber)
             : false;
 
     // check validition status of all required field
@@ -63,6 +63,7 @@ helpers.addSimCard = async (simData) => {
             vendorId,
             orderNumber
         }
+        console.log(simCard);
 
         // insert sim card data to database
         try {
