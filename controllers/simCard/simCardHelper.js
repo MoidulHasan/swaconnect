@@ -271,6 +271,61 @@ helpers.updateSimCard = async (simData) => {
 
 
 
+// view single sim card data
+helpers.viewSimData = async (_id) => {
+    const output = {};
+    // find sim card data by sim card id
+    try {
+        let simData;
+        if (_id) {
+            simData = await SimCardModal.findOne({ _id: _id })
+                // .select('userName orderNumber operations distributor agent applicationNumber customerId phonePlan returns simOperationsLog notes')
+                .populate("serviceCarrier")
+                .populate("vendor")
+                // .populate("orderNumber")
+                .populate("operations")
+                .populate("agent")
+                .populate("applicationNumber")
+                .populate("customerId")
+                .populate("phonePlan")
+            // .populate("simOperationsLog")
+            // .populate("notes");
+        } else {
+            simData = await SimCardModal.find()
+                // .select('userName orderNumber operations distributor agent applicationNumber customerId phonePlan returns simOperationsLog notes')
+                .populate("serviceCarrier")
+                .populate("vendor")
+                // .populate("orderNumber")
+                .populate("operations")
+                .populate("agent")
+                .populate("applicationNumber")
+                .populate("customerId")
+                .populate("phonePlan")
+            // .populate("simOperationsLog")
+            // .populate("notes");
+        }
+
+        console.log(simData);
+
+        if (simData) {
+            output.status = "success";
+            output.data = simData;
+        } else {
+            output.status = "fail";
+            output.data = null;
+            output.message = "no sim card found";
+        }
+    } catch (err) {
+        console.log(err);
+        output.status = "fail";
+        output.message = "server error";
+    }
+
+    return output;
+};
+
+
+
 
 // export module
 module.exports = helpers;

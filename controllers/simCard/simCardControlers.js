@@ -5,7 +5,7 @@ const SimCard = require("../../models/simCardModels/simCardModel");
 const AppError = require("../../controllers/error/appError");
 const logger = require("../../utilities/logger");
 const { dateNow } = require("../../utilities/utils");
-const { addSimCard, updateSimCard } = require("./simCardHelper");
+const { addSimCard, updateSimCard, viewSimData } = require("./simCardHelper");
 const ObjectId = require('mongodb').ObjectId;
 
 
@@ -83,135 +83,51 @@ simCardControlers.updateSim = async (req, res, next) => {
 
 
 
-// Add single sim card
-// simCardControlers.addSingleSimCard = async (simCardData) => {
-//     let result = {};
-//     try {
-
-//         // 2) if sim card exist then assign error to output
-//         if (simExistStatus) {
-//             const error = new AppError(
-//                 400,
-//                 "bad request",
-//                 "This SSID is already registered"
-//             );
-//             result.error = error;
-//         } else {
-//             // 3) find last inserted sim card id
-//             const lastId = await SimCard.findOne().sort("-id");
-//             if (lastId) {
-//                 // 4) add new id to sim card data
-//                 let newId = parseInt(lastId.id) + 1;
-//                 simCardData.id = typeof newId === "number" ? newId : false;
-//             }
-
-//             // 5) if sim card not exist then insert sim card data to database
-//             const newSimCart = await SimCard.create(simCardData);
-
-//             // 6) if sim card inserted then assign success response to output
-//             if (newSimCart) {
-//                 result.statusCode = 201;
-//                 result.status = "Success";
-//                 result.message = "new sim card added";
-//             }
-//         }
-//     } catch (err) {
-//         console.log(err);
-//         // console.log("error catched", err);
-//         // check if error is validation error
-//         if (err.name === "ValidationError") {
-//             // console.log("Validation error occured")
-//             // take all error to errors object
-//             let errors = {};
-//             Object.keys(err.errors).forEach((key) => {
-//                 errors[key] = err.errors[key].message;
-//             });
-
-//             // construct error and assign to output
-//             const error = new AppError(
-//                 500,
-//                 "bad request",
-//                 "sim card data validation error"
-//             );
-//             error.allErrors = errors;
-//             result.error = error;
-//         } else {
-//             // if error is not validation error then save it to log file and create and assign an server error to output
-//             logger.error(err);
-//             const error = new AppError(
-//                 500,
-//                 "Server Error",
-//                 "There is an internal server error, please try again letter"
-//             );
-//             result.error = error;
-//         }
-//     }
-//     return result;
-// };
-
 // sim card data request controler
 simCardControlers.simCardData = async (req, res, next) => {
     const _id = typeof req.body._id === "string" ? ObjectId(req.body._id) : false;
 
     if (_id) {
+        // find sim card data by id
+        const simData = await viewSimData(_id);
 
-        // find sim card data by sim card id
-        try {
-            const simData = await SimCard.findOne({ _id: _id });
-
-
-            if (simData) {
-                // console.log(allSimData)
-                res.status(200).json({
-                    status: "success",
-                    data: simData,
-                });
-            } else {
-                res.status(200).json({
-                    status: "success",
-                    data: null,
-                    message: "no data found",
-                });
-            }
-        } catch (err) {
+        if (simData.status === "success") {
+            res.status(200).json({
+                status: "success",
+                data: simData.data
+            });
+        } else if (simData.status === "fail" && simData.data == null) {
+            res.status(400).json({
+                status: "bad request",
+                message: "no data found with this id"
+            });
+        } else {
             res.status(500).json({
                 status: "server error",
-                message: "there is an internal server error",
+                message: "There is an internal server error"
             });
-            // console.log(err);
         }
+
     } else {
         // find all sim card data and send with response
-        try {
-            const allSimData = await SimCard.find()
-                // .populate("serviceCarrier", ["name"] )
-                .populate({
-                    path: 'serviceCarrier',
-                    select: 'name'
-                })
-                .populate("vendor", "firstName");
-            console.log(allSimData)
+        const simData = await viewSimData();
+        console.log(simData);
 
-            if (allSimData.length > 0) {
-                console.log(allSimData)
-                res.status(200).json({
-                    status: "success",
-                    data: allSimData,
-                });
-            } else {
-                res.status(200).json({
-                    status: "success",
-                    data: null,
-                    message: "no data found",
-                });
-            }
-        } catch (err) {
-            console.log(err);
+        if (simData.status === "success") {
+            res.status(200).json({
+                status: "success",
+                data: simData.data
+            });
+        } else if (simData.status === "fail" && simData.data == null) {
+            res.status(400).json({
+                status: "success",
+                message: "No data found"
+            });
+        } else {
             res.status(500).json({
                 status: "server error",
-                message: "there is an internal server error",
+                message: "There is an internal server error"
             });
-            // console.log(err);
         }
     }
 };
