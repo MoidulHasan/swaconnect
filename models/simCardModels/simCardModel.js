@@ -27,8 +27,8 @@ const simCardSchema = new mongoose.Schema({
     serviceCarrier: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, "Service Carrier Id is Required"],
-        ref: "servicecarrier",
-        select: false,
+        ref: "serviceCarrier",
+        select: true,
     },
     PUK1: {
         type: String,
@@ -87,7 +87,7 @@ const simCardSchema = new mongoose.Schema({
     },
     operations: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "SimOperations",
+        ref: "SimOperation",
     },
     /**
      * !field name changed to physicalStatus from good/bad, need to inform
@@ -111,6 +111,7 @@ const simCardSchema = new mongoose.Schema({
          */
         type: mongoose.Schema.Types.ObjectId,
         ref: "Agent",
+        select: true,
     },
     applicationNumber: {
         type: mongoose.Schema.Types.ObjectId,
@@ -178,6 +179,8 @@ const handleError = (error, doc, next) => {
         next();
     }
 };
+
+
 
 // add error handling middleware after operation
 simCardSchema.post("save", handleError);

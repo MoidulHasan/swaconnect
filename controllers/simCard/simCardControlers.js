@@ -6,6 +6,9 @@ const AppError = require("../../controllers/error/appError");
 const logger = require("../../utilities/logger");
 const { dateNow } = require("../../utilities/utils");
 const { addSimCard, updateSimCard } = require("./simCardHelper");
+const ObjectId = require('mongodb').ObjectId;
+
+
 
 // Module Scafolding
 const simCardControlers = {};
@@ -24,13 +27,25 @@ simCardControlers.addSim = async (req, res, next) => {
         console.log(insertSimStatus);
 
         if (insertSimStatus.status === "success") {
+
+            /**
+             * !todo: sim status operation
+             */
+
+
             res.status(200).json({
                 status: "success",
                 message: "sim card inserted successfully.",
             });
-        } else {
-            res.status(insertSimStatus.error.statusCode).json(
-                insertSimStatus.error
+        } else if (insertSimStatus.error) {
+            next(insertSimStatus.error);
+        }
+        else {
+            res.status(500).json(
+                {
+                    status: "server error",
+                    message: "there is an internal server error"
+                }
             );
         }
 
@@ -40,7 +55,7 @@ simCardControlers.addSim = async (req, res, next) => {
 
     } else {
         res.status(400).json({
-            status: "bad request",
+            status: "bad request1",
             data: {
                 message: "Please provide proper sim card adding method",
             },
@@ -136,14 +151,14 @@ simCardControlers.updateSim = async (req, res, next) => {
 
 // sim card data request controler
 simCardControlers.simCardData = async (req, res, next) => {
-    const id = typeof req.body.id === "number" ? req.body.id : false;
-    if (id) {
-        // console.log(req.body.id);
+    const _id = typeof req.body._id === "string" ? ObjectId(req.body._id) : false;
+
+    if (_id) {
 
         // find sim card data by sim card id
         try {
-            const simData = await SimCard.findOne({ id: id });
-            // console.log(simData)
+            const simData = await SimCard.findOne({ _id: _id });
+
 
             if (simData) {
                 // console.log(allSimData)
@@ -168,11 +183,17 @@ simCardControlers.simCardData = async (req, res, next) => {
     } else {
         // find all sim card data and send with response
         try {
-            const allSimData = await SimCard.find();
-            // console.log(allSimData)
+            const allSimData = await SimCard.find()
+                // .populate("serviceCarrier", ["name"] )
+                .populate({
+                    path: 'serviceCarrier',
+                    select: 'name'
+                })
+                .populate("vendor", "firstName");
+            console.log(allSimData)
 
             if (allSimData.length > 0) {
-                // console.log(allSimData)
+                console.log(allSimData)
                 res.status(200).json({
                     status: "success",
                     data: allSimData,
@@ -185,6 +206,7 @@ simCardControlers.simCardData = async (req, res, next) => {
                 });
             }
         } catch (err) {
+            console.log(err);
             res.status(500).json({
                 status: "server error",
                 message: "there is an internal server error",
