@@ -10,7 +10,9 @@ const { addSimCard } = require("./simCardHelper");
 // Module Scafolding
 const simCardControlers = {};
 
-simCardControlers.add = async (req, res, next) => {
+
+// method to control add sim card route
+simCardControlers.addSim = async (req, res, next) => {
     // check the sim adding method
     const simAddingMethod = req.body.simAddingMethod;
 
@@ -20,6 +22,18 @@ simCardControlers.add = async (req, res, next) => {
         const insertSimStatus = await addSimCard(req.body.simCardData);
 
         console.log(insertSimStatus);
+
+        if (insertSimStatus.status === "success") {
+            res.status(200).json({
+                status: "success",
+                message: "sim card inserted successfully.",
+            });
+        } else {
+            res.status(insertSimStatus.error.statusCode).json(
+                insertSimStatus.error
+            );
+        }
+
 
 
     } else if (simAddingMethod === "auto") { } else {
@@ -31,6 +45,17 @@ simCardControlers.add = async (req, res, next) => {
         });
     }
 };
+
+
+
+
+// method to handle update sim card route
+simCardControlers.updateSim = async (req, res, next) => {
+
+};
+
+
+
 
 // Add single sim card
 // simCardControlers.addSingleSimCard = async (simCardData) => {

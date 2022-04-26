@@ -1,6 +1,6 @@
 // Dependencies
 const express = require('express');
-const { add, simCardData } = require('../../controllers/simCard/simCardControlers')
+const { addSim, simCardData, updateSim } = require('../../controllers/simCard/simCardControlers')
 const simCardOperationRoute = require("./operations/simCardOperations.route");
 
 
@@ -16,11 +16,11 @@ router
 
 router
     .route('/add')
-    .post(add);
+    .post(addSim);
 
 router
-    .route('/add')
-    .post(add);
+    .route('/update')
+    .post(updateSim);
 
 
 // route handler for sim card operations route

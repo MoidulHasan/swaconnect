@@ -51,16 +51,16 @@ helpers.addSimCard = async (simData) => {
             : false;
 
     // check validition status of all required field
-    if (SSID && PUK1 && userName && serviceCarrier && compatibility && physicalStatus) {
+    if (SSID && PUK1 && userName && serviceCarrier && vendorId && compatibility && physicalStatus && orderNumber) {
         // construct simcard object
         const simCard = {
             SSID,
             PUK1,
             userName,
             serviceCarrier,
+            vendorId,
             compatibility,
             physicalStatus,
-            vendorId,
             orderNumber
         }
         console.log(simCard);
@@ -93,11 +93,11 @@ helpers.addSimCard = async (simData) => {
                 // 6) if sim card inserted then assign success response to output
                 if (newSimCart) {
                     output.status = "success";
-                    output.message = "new sim card added";
                 }
                 else {
+                    const err = new AppError(500, "server error", "There is an internal server error, please try again.")
                     output.status = "fail";
-                    output.message = "sim card not inserted";
+                    output.error = err;
                 }
             }
         } catch (error) {
@@ -118,6 +118,7 @@ helpers.addSimCard = async (simData) => {
                     "sim card data validation error"
                 );
                 error.allErrors = errors;
+                output.status = "fail";
                 output.error = error;
             } else {
                 // if error is not validation error then save it to log file and create and assign an server error to output
@@ -127,6 +128,7 @@ helpers.addSimCard = async (simData) => {
                     "Server Error",
                     "There is an internal server error, please try again letter"
                 );
+                output.status = "fail";
                 output.error = error;
             }
         }
