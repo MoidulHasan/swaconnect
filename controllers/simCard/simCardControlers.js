@@ -5,7 +5,7 @@ const SimCard = require("../../models/simCardModels/simCardModel");
 const AppError = require("../../controllers/error/appError");
 const logger = require("../../utilities/logger");
 const { dateNow } = require("../../utilities/utils");
-const { addSimCard } = require("./simCardHelper");
+const { addSimCard, updateSimCard } = require("./simCardHelper");
 
 // Module Scafolding
 const simCardControlers = {};
@@ -36,7 +36,9 @@ simCardControlers.addSim = async (req, res, next) => {
 
 
 
-    } else if (simAddingMethod === "auto") { } else {
+    } else if (simAddingMethod === "auto") {
+
+    } else {
         res.status(400).json({
             status: "bad request",
             data: {
@@ -51,6 +53,15 @@ simCardControlers.addSim = async (req, res, next) => {
 
 // method to handle update sim card route
 simCardControlers.updateSim = async (req, res, next) => {
+
+    if (req.body.simData) {
+        const updatedSim = await updateSimCard(req.body.simData);
+        console.log(updatedSim)
+    }
+    else {
+        const err = new AppError(400, "bad request", "please provide valid input");
+        next(err);
+    }
 
 };
 

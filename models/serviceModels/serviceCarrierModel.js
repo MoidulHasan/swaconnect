@@ -136,11 +136,11 @@ const handleError = (error, doc, next) => {
             fields: error.keyValue,
         };
         next(err);
-    } else if (err.name === "ValidationError") {
+    } else if (error.name === "ValidationError") {
         // take all error to errors object
         let errors = {};
-        Object.keys(err.errors).forEach((key) => {
-            errors[key] = err.errors[key].message;
+        Object.keys(error.errors).forEach((key) => {
+            errors[key] = error.errors[key].message;
         });
 
         const err = {
