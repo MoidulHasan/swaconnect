@@ -100,7 +100,16 @@ helpers.addSimCard = async (simData) => {
                         status: "success"
                     }
 
+                    // save operation log to database
                     const operationLog = await SimOperation.create(operation);
+
+                    // insert operation log id to sim card
+                    /**
+                     * !todo: have to update sim card with operation log
+                     */
+
+
+
                 }
                 else {
                     const err = new AppError(500, "server error", "There is an internal server error, please try again.")
@@ -157,7 +166,6 @@ helpers.addSimCard = async (simData) => {
 helpers.updateSimCard = async (simData) => {
     const output = {};
 
-
     if (simData) {
 
         // validate ssid
@@ -180,79 +188,85 @@ helpers.updateSimCard = async (simData) => {
 
                 // include ESN if valid
                 if (typeof simData.ESN === "string" && simData.ESN.length > 0)
-                    updateData.ESN = simData.ESN;
+                    simCardPrevData.ESN = simData.ESN;
 
                 // include serviceCarrier if valid
                 if (typeof simData.serviceCarrier === "string" && simData.serviceCarrier.length > 0)
-                    updateData.serviceCarrier = ObjectId(simData.serviceCarrier);
+                    simCardPrevData.serviceCarrier = ObjectId(simData.serviceCarrier);
 
                 // include PUK1 if valid
                 if (typeof simData.PUK1 === "string" && simData.PUK1.length > 0)
-                    updateData.PUK1 = simData.PUK1;
+                    simCardPrevData.PUK1 = simData.PUK1;
 
                 // include simStatus and status date if valid
                 if (typeof simData.simStatus === "string" && simData.simStatus.length > 0) {
-                    updateData.simStatus = simData.simStatus;
-                    updateData.statusDate = Date.now("dd/mm/yyyy");
+                    simCardPrevData.simStatus = simData.simStatus;
+                    simCardPrevData.statusDate = Date.now("dd/mm/yyyy");
                 }
 
                 // include MDN if valid
                 if (typeof simData.MDN === "string" && simData.MDN.length > 0)
-                    updateData.MDN = simData.MDN;
+                    simCardPrevData.MDN = simData.MDN;
 
                 // include userName if valid
                 if (typeof simData.userName === "string" && simData.userName.length > 0)
-                    updateData.userName = simData.userName;
+                    simCardPrevData.userName = simData.userName;
 
                 // include vendor if valid
                 if (typeof simData.vendor === "string" && simData.vendor.length > 0)
-                    updateData.vendor = ObjectId(simData.vendor);
+                    simCardPrevData.vendor = ObjectId(simData.vendor);
 
                 // include orderNumber if valid
                 if (typeof simData.orderNumber === "string" && simData.orderNumber.length > 0)
-                    updateData.orderNumber = ObjectId(simData.orderNumber);
+                    simCardPrevData.orderNumber = ObjectId(simData.orderNumber);
 
                 // include compatibility if valid
                 if (typeof simData.compatibility === "string" && simData.compatibility.length > 0)
-                    updateData.compatibility = simData.compatibility;
+                    simCardPrevData.compatibility = simData.compatibility;
 
                 // include SimOperations if valid
-                if (typeof simData.SimOperations === "string" && simData.SimOperations.length > 0)
-                    updateData.SimOperations = ObjectId(simData.SimOperations);
+                if (typeof simData.SimOperations === "string" && simData.SimOperations.length > 0) {
+                    simCardPrevData.SimOperations.push(ObjectId(simData.SimOperations));
+                }
+
 
                 // include physicalStatus if valid
                 if (typeof simData.physicalStatus === "string" && simData.physicalStatus.length > 0)
-                    updateData.physicalStatus = simData.physicalStatus;
+                    simCardPrevData.physicalStatus = simData.physicalStatus;
 
                 // include distributor if valid
                 if (typeof simData.distributor === "string" && simData.distributor.length > 0)
-                    updateData.distributor = ObjectId(simData.distributor);
+                    simCardPrevData.distributor = ObjectId(simData.distributor);
 
                 // include agent if valid
                 if (typeof simData.agent === "string" && simData.agent.length > 0)
-                    updateData.agent = ObjectId(simData.agent);
+                    simCardPrevData.agent = ObjectId(simData.agent);
 
                 // include customerId if valid
                 if (typeof simData.customerId === "string" && simData.customerId.length > 0)
-                    updateData.customerId = ObjectId(simData.customerId);
+                    simCardPrevData.customerId = ObjectId(simData.customerId);
 
                 // include phonePlan if valid
                 if (typeof simData.phonePlan === "string" && simData.phonePlan.length > 0)
-                    updateData.phonePlan = ObjectId(simData.phonePlan);
+                    simCardPrevData.phonePlan = ObjectId(simData.phonePlan);
 
                 // include returns if valid
                 if (typeof simData.returns === "string" && simData.returns.length > 0)
-                    updateData.returns = ObjectId(simData.returns);
+                    simCardPrevData.returns = ObjectId(simData.returns);
 
                 // include simOperationsLog if valid
                 if (typeof simData.simOperationsLog === "string" && simData.simOperationsLog.length > 0)
-                    updateData.simOperationsLog = ObjectId(simData.simOperationsLog);
+                    simCardPrevData.simOperationsLog.push(ObjectId(simData.simOperationsLog));
 
                 // include simOperationsLog if valid
                 if (typeof simData.notes === "string" && simData.notes.length > 0)
-                    updateData.notes = ObjectId(simData.notes);
+                    simCardPrevData.note.push(ObjectId(simData.notes));
 
-                console.log(updateData);
+                console.log(simCardPrevData);
+
+
+                // const updateSim = await SimCardModal.findOneAndUpdate
+
 
             } else {
                 output.status = "fail";
