@@ -18,16 +18,16 @@ const auth = {};
 
 auth.createToken = (id) => {
     return jwt.sign({
-            id,
-        },
+        id,
+    },
         process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_EXPIRES_IN,
-        }
+        expiresIn: process.env.JWT_EXPIRES_IN,
+    }
     );
 };
 
 // login controler
-auth.login = async(req, res, next) => {
+auth.login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
@@ -50,6 +50,8 @@ auth.login = async(req, res, next) => {
             email,
         }).select("+password");
 
+        console.log(user);
+
         if (!user || !(await user.correctPassword(password, user.password))) {
             return next(
                 new AppError(401, "Login Failed", "Email or Password is wrong"),
@@ -66,7 +68,7 @@ auth.login = async(req, res, next) => {
         // 4) make login status true in database
         User.findByIdAndUpdate(
             user.id, { loginStatus: true },
-            function(err, docs) {
+            function (err, docs) {
                 if (err) {
                     logger.error(err);
                 } else {
@@ -78,6 +80,9 @@ auth.login = async(req, res, next) => {
 
                     res.status(200).json({
                         status: "success",
+                        userId: user._id,
+                        userName: user.userName,
+                        role: user.role,
                         token,
                     });
                 }
@@ -89,31 +94,31 @@ auth.login = async(req, res, next) => {
 };
 
 // Signup controler
-auth.signup = async(req, res, next) => {
+auth.signup = async (req, res, next) => {
     try {
         // 1) validate user input
         const fullName =
             typeof req.body.fullName === "string" && req.body.fullName.length > 0 ?
-            req.body.fullName :
-            false;
+                req.body.fullName :
+                false;
         const userName =
             typeof req.body.userName === "string" && req.body.userName.length > 0 ?
-            req.body.userName :
-            false;
+                req.body.userName :
+                false;
         const email =
             typeof req.body.email === "string" &&
-            req.body.email.length > 0 &&
-            isEmailValid(req.body.email) ?
-            req.body.email :
-            false;
+                req.body.email.length > 0 &&
+                isEmailValid(req.body.email) ?
+                req.body.email :
+                false;
         const password =
             typeof req.body.password === "string" && req.body.password.length > 0 ?
-            req.body.password :
-            false;
+                req.body.password :
+                false;
         const role =
             typeof req.body.role === "string" && req.body.role.length > 0 ?
-            req.body.role :
-            false;
+                req.body.role :
+                false;
         const active =
             typeof req.body.active === "boolean" ? req.body.active : false;
         const loginStatus = false;
@@ -184,7 +189,7 @@ auth.signup = async(req, res, next) => {
 };
 
 // protector function for private routes
-auth.authenticator = async(req, res, next) => {
+auth.authenticator = async (req, res, next) => {
     try {
         // 1) check if the token is there
         let token;
@@ -244,11 +249,11 @@ auth.authenticator = async(req, res, next) => {
     }
 };
 
-auth.logout = async(req, res, next) => {
+auth.logout = async (req, res, next) => {
     // make login status false in database
     User.findByIdAndUpdate(
         req.user.id, { loginStatus: false },
-        function(err, docs) {
+        function (err, docs) {
             if (err) {
                 logger.error(err);
             } else {

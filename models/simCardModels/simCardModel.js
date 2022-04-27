@@ -62,11 +62,12 @@ const simCardSchema = new mongoose.Schema({
         // unique: false,
         validate: customValidator.isNonZeroLengthString,
     },
-    userName: {
+    userId: {
         // type: mongoose.Schema.Types.ObjectId,
         // ref: "User",
-        type: String,
-        required: [true, "User Name Required"],
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "User id Required"]
     },
     vendor: {
         type: mongoose.Schema.Types.ObjectId,
@@ -134,12 +135,12 @@ const simCardSchema = new mongoose.Schema({
         ref: "SimOperationsLog",
         // required: true,
         select: false,
-    },],
+    }],
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Notes",
         select: false,
-    },],
+    }],
 });
 
 // error handling middleware

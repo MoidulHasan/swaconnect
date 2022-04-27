@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const simOperationLogSchema = mongoose.Schema({
     date: {
         type: Date,
+        required: true,
         default: Date.now,
     },
     operation: {
@@ -14,17 +15,25 @@ const simOperationLogSchema = mongoose.Schema({
         select: true,
         unique: false,
     },
-    result: {
+    status: {
         type: String,
-        required: [true, "operation result is required"],
+        required: [true, "operation status is required"],
         select: true,
         unique: false,
     },
-    ssid: {
-        type: String,
-        required: [true, "Operation sim card is required"],
+    simCardId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "SimCard",
+        required: [true, "sim card id is required"],
+        select: true,
     },
-}, { _id: false });
+    operator: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "user id is required"],
+        select: true,
+    }
+});
 
 
 // export model

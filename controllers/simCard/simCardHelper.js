@@ -4,7 +4,7 @@ const SimCardModal = require("../../models/simCardModels/simCardModel");
 const AppError = require("../../controllers/error/appError");
 const logger = require("../../utilities/logger");
 const ObjectId = require('mongodb').ObjectId;
-
+const SimOperation = require("../../models/simCardModels/simOperationModel");
 
 // module scafolding
 const helpers = {};
@@ -22,9 +22,9 @@ helpers.addSimCard = async (simData) => {
         typeof simData.PUK1 === "string" && simData.PUK1.length > 0
             ? simData.PUK1
             : false;
-    const userName =
-        typeof simData.userName === "string" && simData.userName.length > 0
-            ? simData.userName
+    const userId =
+        typeof simData.userId === "string" && simData.userId.length > 0
+            ? ObjectId(simData.userId)
             : false;
     const serviceCarrier =
         typeof simData.serviceCarrier === "string" && simData.serviceCarrier.length > 0
@@ -51,12 +51,12 @@ helpers.addSimCard = async (simData) => {
             : false;
 
     // check validition status of all required field
-    if (SSID && PUK1 && userName && serviceCarrier && vendor && compatibility && physicalStatus && orderNumber) {
+    if (SSID && PUK1 && userId && serviceCarrier && vendor && compatibility && physicalStatus && orderNumber) {
         // construct simcard object
         const simCard = {
             SSID,
             PUK1,
-            userName,
+            userId,
             serviceCarrier,
             vendor,
             compatibility,
@@ -93,6 +93,14 @@ helpers.addSimCard = async (simData) => {
                 // 6) if sim card inserted then assign success response to output
                 if (newSimCart) {
                     output.status = "success";
+                    const operation = {
+                        operation: "Sim Card Insert",
+                        simCardId: newSimCart._id,
+                        operator: simCard.userId,
+                        status: "success"
+                    }
+
+                    const operationLog = await SimOperation.create(operation);
                 }
                 else {
                     const err = new AppError(500, "server error", "There is an internal server error, please try again.")
@@ -323,6 +331,31 @@ helpers.viewSimData = async (_id) => {
 
     return output;
 };
+
+
+// sim card operation log
+helpers.insertOperation = async (operation) => {
+    let output;
+    if (operation) {
+        // insert operation log to database
+        const operation = await SimOperation.create(operation);
+
+
+
+        if (operation && operation._id) {
+            output.status = "success";
+            output.data = operation;
+        }
+        else {
+            output.status = "fail"
+            output.erorr = operation.error;
+        }
+    } else {
+        output.status = "fail";
+        output.error = "invalid input";
+    }
+    return operation;
+}
 
 
 
