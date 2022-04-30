@@ -23,6 +23,7 @@ const simCardSchema = new mongoose.Schema({
         type: String,
         select: true,
         validate: customValidator.isNonZeroLengthString,
+        default: null
     },
     serviceCarrier: {
         type: mongoose.Schema.Types.ObjectId,
@@ -61,6 +62,7 @@ const simCardSchema = new mongoose.Schema({
         select: true,
         // unique: false,
         validate: customValidator.isNonZeroLengthString,
+        default: null
     },
     userId: {
         // type: mongoose.Schema.Types.ObjectId,
@@ -73,26 +75,25 @@ const simCardSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Vendor",
         select: true,
+        default: null
     },
     orderNumber: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "SimCardOrder",
-        select: false,
+        select: true,
+        default: null
     },
     compatibility: {
-        /**
-         * !have to know more about it
-         */
         type: String,
         select: true,
+        default: null
     },
     operations: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "SimOperation",
+        ref: "SimOperationLog",
+        default: Object
     },
-    /**
-     * !field name changed to physicalStatus from good/bad, need to inform
-     */
+
     physicalStatus: {
         type: String,
         enum: ["Good", "Bad"],
@@ -100,46 +101,45 @@ const simCardSchema = new mongoose.Schema({
         select: true,
     },
     distributor: {
-        /**
-         * !need to confirmed when distributor will be added, at the begining of adding sim card or at any time
-         */
         type: mongoose.Schema.Types.ObjectId,
         ref: "Distributor",
+        default: null
     },
     agent: {
-        /**
-         * !need to confirmed when agent will be added, at the begining of adding sim card or at any time
-         */
         type: mongoose.Schema.Types.ObjectId,
         ref: "Agent",
         select: true,
+        default: null
     },
     applicationNumber: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Application",
+        default: null
     },
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Customer",
+        default: null
     },
     phonePlan: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "phonePlan",
+        default: null
     },
     returns: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Return",
+        default: Object
     },
     simOperationsLog: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "SimOperationsLog",
-        // required: true,
-        select: false,
+        default: Object
     }],
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Notes",
-        select: false,
+        default: Object
     }],
 });
 
@@ -188,6 +188,9 @@ simCardSchema.post("save", handleError);
 simCardSchema.post("update", handleError);
 simCardSchema.post("findOneAndUpdate", handleError);
 simCardSchema.post("insertMany", handleError);
+
+simCardSchema.post("find", handleError);
+
 
 const SimCard = mongoose.model("SimCard", simCardSchema);
 module.exports = SimCard;

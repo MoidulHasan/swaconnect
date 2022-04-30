@@ -1,6 +1,6 @@
 // Dependencies
 const express = require('express');
-const { add, view, update, remove } = require('../../controllers/serviceCarrier/phonePlanControler')
+const { add, view, update, remove } = require('../../controllers/phonePlan/phonePlanControler')
 
 // module scafolding
 const router = express.Router();
