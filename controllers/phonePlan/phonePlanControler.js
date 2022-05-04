@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 const PhonePlan = require("../../models/serviceModels/phonePlanModel")
 const AppError = require("../error/appError");
-const { addPlan } = require("./phonePlanHelpers");
+const { addPlan, planViewByID, planViewByServiceCarrierID } = require("./phonePlanHelpers");
 
 // module scafolding
 const phonePlan = {};
@@ -35,61 +35,39 @@ phonePlan.add = async (req, res, next) => {
     }
 };
 
-
 // view phone plan data
 phonePlan.view = async (req, res, next) => {
 
-    // console.log(req.query);
+    console.log(req.query);
 
     if (Object.keys(req.query).length !== 0) {
         // take phone plan id form the request query
-        const phonePlanId = typeof (req.query.id) === "string" && req.query.id > 0 ? req.query.id : false;
+        const phonePlanId = typeof (req.query.plan) === "string" && req.query.plan.length > 0 ? req.query.plan : false;
 
-        // const phonePlanObjectId = mongoose.Types.ObjectId(phonePlanId);
-        // console.log("object id: ", phonePlanObjectId);
+        // take phone plan id form the request query
+        const serviceCarrierId = typeof (req.query.serviceCarrier) === "string" && req.query.serviceCarrier.length > 0 ? req.query.serviceCarrier : false;
 
-        // find phone plan data by id
-        try {
-            const phonePlanData = await PhonePlan.findOne({ id: phonePlanId });
+        // find plan data based on query type
+        const planData = phonePlanId ? await planViewByID(phonePlanId) : await planViewByServiceCarrierID(serviceCarrierId);
 
-            if (phonePlanData) {
-                console.log(typeof phonePlanData.id)
-                res.status(200).json({
-                    status: "success",
-                    data: phonePlanData,
-                });
-            } else {
-                res.status(404).json({
-                    status: "not found",
-                    data: "Please provide valid phone plan id",
-                });
-            }
-        } catch (err) {
-            const error = new AppError(500, "server error", "There is an internal server error, please try again letter");
-            next(error);
+
+        // send response to user
+        if (planData) {
+            const statusCode = planData.statusCode;
+            planData.statusCode = undefined;
+            res.status(statusCode).json(planData);
+        }
+        else {
+            res.status(500).json({
+                status: "server error",
+                data: "There is an internal error, please try again.",
+            });
         }
     } else {
-
-
-        // find all phone plan data
-        try {
-            const phonePlanData = await PhonePlan.find();
-
-            if (phonePlanData) {
-                res.status(200).json({
-                    status: "success",
-                    data: phonePlanData,
-                });
-            } else {
-                res.status(404).json({
-                    status: "not found",
-                    data: "Please provide valid phone plan id",
-                });
-            }
-        } catch (err) {
-            const error = AppError(500, "server error", "There is an internal server error, please try again letter");
-            next(error);
-        }
+        res.status(404).json({
+            status: "not found",
+            data: "Please provide valid phone plan id",
+        });
     }
 
 }

@@ -2,6 +2,7 @@
 const PhonePlan = require("../../models/serviceModels/phonePlanModel");
 const AppError = require("../error/appError");
 const serviceCarrier = require("../../models/serviceModels/serviceCarrierModel");
+const { default: mongoose } = require("mongoose");
 
 
 // Module Scafolding
@@ -69,6 +70,71 @@ helpers.addPlan = async (planData) => {
     return output;
 };
 
+
+helpers.planViewByID = async (planId) => {
+    console.log(planId);
+    let output = {};
+    if (planId) {
+        if (mongoose.isValidObjectId(planId)) {
+            const planData = await PhonePlan.findById(planId);
+            // console.log("plan data: ", planData);
+            if (planData) {
+                output.status = "success";
+                output.statusCode = 200;
+                output.data = planData;
+            }
+            else {
+                output.status = "not found";
+                output.statusCode = 204;
+                output.message = "no data found";
+            }
+        } else {
+            output.statusCode = 400;
+            output.status = "bad request";
+            output.message = "invalid plan id";
+        }
+    }
+    else {
+        output.statusCode = 400;
+        output.status = "bad request";
+        output.message = "please providde valid plan id"
+    }
+    return output;
+};
+
+
+// view plan by service carrier id
+helpers.planViewByServiceCarrierID = async (serviceCarrierId) => {
+    console.log("Called")
+    console.log(serviceCarrierId);
+    let output = {};
+    if (serviceCarrierId) {
+        if (mongoose.isValidObjectId(serviceCarrierId)) {
+            const planData = await PhonePlan.find({ serviceCarrier: serviceCarrierId });
+            // console.log("plan data: ", planData);
+            if (planData) {
+                output.status = "success";
+                output.statusCode = 200;
+                output.data = planData;
+            }
+            else {
+                output.status = "not found";
+                output.statusCode = 204;
+                output.message = "no data found";
+            }
+        } else {
+            output.statusCode = 400;
+            output.status = "bad request";
+            output.message = "invalid plan id";
+        }
+    }
+    else {
+        output.statusCode = 400;
+        output.status = "bad request";
+        output.message = "please providde valid plan id"
+    }
+    return output;
+};
 
 // export module
 module.exports = helpers;
