@@ -76,18 +76,22 @@ phonePlan.view = async (req, res, next) => {
 // update phone plan data
 phonePlan.update = async (req, res, next) => {
 
-    console.log(req.body.phonePlan);
+    // console.log(req.body.phonePlan);
 
     // take phone plan id form the request query
-    const phonePlanDataId = typeof (req.body.phonePlan.id) === "number" && req.body.phonePlan.id > 0 ? req.body.phonePlan.id : false;
+    const phonePlanId = typeof (req.body.phonePlan.id) === "string" && req.body.phonePlan.id.length > 0 && mongoose.isValidObjectId(req.body.phonePlan.id) ? req.body.phonePlan.id : false;
 
+    // console.log(phonePlanId)
     // take phone plan data from the request body and make id undefined
     const phonePlanData = typeof (req.body.phonePlan) === "object" ? req.body.phonePlan : false;
 
+    phonePlanData.id = undefined;
+    // console.log(phonePlanData)
     // find phone plan data by id
     try {
-        const phonePlanUpdatedData = await PhonePlan.findOneAndUpdate({ id: phonePlanDataId }, phonePlanData);
+        const phonePlanUpdatedData = await PhonePlan.findByIdAndUpdate(phonePlanId, phonePlanData);
 
+        console.log(phonePlanUpdatedData)
         if (phonePlanUpdatedData) {
             res.status(200).json({
                 status: "success",
@@ -100,7 +104,8 @@ phonePlan.update = async (req, res, next) => {
             });
         }
     } catch (err) {
-        const error = AppError(500, "server error", "There is an internal server error, please try again letter");
+        console.log(err)
+        const error = new AppError(500, "server error", "There is an internal server error, please try again letter");
         next(error);
     }
 };
@@ -108,11 +113,12 @@ phonePlan.update = async (req, res, next) => {
 
 phonePlan.remove = async (req, res, next) => {
     // take phone plan id form the request query
-    const phonePlanId = req.query.id;
+    const phonePlanId = typeof (req.query.id) === "string" && req.query.id.length > 0 && mongoose.isValidObjectId(req.query.id) ? req.query.id : false;
+
 
     // find phone plan data by id
     try {
-        const phonePlanData = await PhonePlan.findOneAndDelete({ id: phonePlanId });
+        const phonePlanData = await PhonePlan.findByIdAndDelete(phonePlanId);
 
         if (phonePlanData) {
             res.status(200).json({
