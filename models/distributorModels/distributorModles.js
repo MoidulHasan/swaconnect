@@ -3,17 +3,17 @@ const mongoose = require("mongoose");
 
 
 // Schema schafolding
-const agentSchema = mongoose.Schema({
+const distributorSchema = mongoose.Schema({
     name: {
         type: String,
         select: true,
-        required: [true, "agent name is required"]
+        required: [true, "Distributor name is required"]
     },
     role: {
         type: String,
         select: true,
-        required: [true, "Agent role is required"],
-        default: 'Agent',
+        required: [true, "Distributor role is required"],
+        default: 'Distributor',
     },
     contactPhone: {
         type: String,
@@ -23,16 +23,16 @@ const agentSchema = mongoose.Schema({
     contactEmail: {
         type: String,
         select: true,
-        required: [true, "Agent's Email is Required"],
+        required: [true, "Distributor's Email is Required"],
     },
-    distributor: {
+    agents: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Distributor",
+        ref: "Agent",
         default: null
-    },
+    }],
 });
 
 
 // export model
-const agent = mongoose.model("Agent", agentSchema);
-module.exports = agent;
+const distributor = mongoose.model("Distributor", distributorSchema);
+module.exports = distributor;

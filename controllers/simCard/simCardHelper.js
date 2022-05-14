@@ -315,10 +315,18 @@ helpers.viewSimData = async (_id) => {
         } else {
             simData = await SimCardModal.find()
                 // .select('userName orderNumber operations distributor agent applicationNumber customerId phonePlan returns simOperationsLog notes')
+                // .populate({
+                //     path: "serviceCarrier",
+                //     populate: {
+                //         path: 'phonePlans',
+                //         // modal: 'phonePlan'
+                //     }
+                // })
                 .populate("serviceCarrier")
                 .populate("vendor")
-                .populate("orderNumber")
+                // .populate("orderNumber")
                 .populate("operations")
+                // .populate("distributor")
                 // .populate("agent")
                 // .populate("applicationNumber")
                 // .populate("customerId")
