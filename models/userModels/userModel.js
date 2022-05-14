@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
                 "Support Lavel 1",
                 "Distributor",
                 "Master Agent",
-                "Agen",
+                "Agent",
             ],
             message: "Your input user role is not correct",
         },

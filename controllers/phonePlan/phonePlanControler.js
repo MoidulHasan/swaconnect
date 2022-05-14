@@ -76,8 +76,6 @@ phonePlan.view = async (req, res, next) => {
 // update phone plan data
 phonePlan.update = async (req, res, next) => {
 
-    // console.log(req.body.phonePlan);
-
     // take phone plan id form the request query
     const phonePlanId = typeof (req.body.phonePlan.id) === "string" && req.body.phonePlan.id.length > 0 && mongoose.isValidObjectId(req.body.phonePlan.id) ? req.body.phonePlan.id : false;
 

@@ -72,7 +72,6 @@ helpers.addPlan = async (planData) => {
 
 
 helpers.planViewByID = async (planId) => {
-    console.log(planId);
     let output = {};
     if (planId) {
         if (mongoose.isValidObjectId(planId)) {
@@ -85,7 +84,7 @@ helpers.planViewByID = async (planId) => {
             }
             else {
                 output.status = "not found";
-                output.statusCode = 204;
+                output.statusCode = 200;
                 output.message = "no data found";
             }
         } else {
@@ -105,8 +104,6 @@ helpers.planViewByID = async (planId) => {
 
 // view plan by service carrier id
 helpers.planViewByServiceCarrierID = async (serviceCarrierId) => {
-    console.log("Called")
-    console.log(serviceCarrierId);
     let output = {};
     if (serviceCarrierId) {
         if (mongoose.isValidObjectId(serviceCarrierId)) {
@@ -119,7 +116,7 @@ helpers.planViewByServiceCarrierID = async (serviceCarrierId) => {
             }
             else {
                 output.status = "not found";
-                output.statusCode = 204;
+                output.statusCode = 200;
                 output.message = "no data found";
             }
         } else {

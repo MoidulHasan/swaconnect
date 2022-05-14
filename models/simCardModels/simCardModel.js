@@ -23,7 +23,7 @@ const simCardSchema = new mongoose.Schema({
         type: String,
         select: true,
         validate: customValidator.isNonZeroLengthString,
-        default: null
+        required: false,
     },
     serviceCarrier: {
         type: mongoose.Schema.Types.ObjectId,
@@ -58,11 +58,10 @@ const simCardSchema = new mongoose.Schema({
     },
     MDN: {
         type: String,
-        // required: [true, "SIM Card MDN Required"],
+        required: false,
         select: true,
         // unique: false,
         validate: customValidator.isNonZeroLengthString,
-        default: null
     },
     userId: {
         // type: mongoose.Schema.Types.ObjectId,
@@ -123,7 +122,7 @@ const simCardSchema = new mongoose.Schema({
     },
     phonePlan: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "phonePlan",
+        ref: "PhonePlan",
         default: null
     },
     returns: {

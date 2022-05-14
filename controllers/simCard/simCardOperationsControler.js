@@ -70,8 +70,16 @@ simCardOperations.ActivateSubscriber = async (req, res, next) => {
             const activeSim = await communication321.activeSimCard(simData);
 
             if (activeSim.data) {
-                if (activeSim.data.status === "successs" && activeSim.data.MDN && activeSim.data.ESN && !activeSim.data.ErrorMessage) {
+                if (activeSim.data.status === "successs" && activeSim.data.MDN && activeSim.data.ESN && activeSim.data.ErrorMessage == null) {
+                    const activatedSimData = {
+                        MDN: activeSim.data.MDN,
+                        ESN: activeSim.data.ESN,
+                    }
 
+                    // const
+                    /**
+                     * !have to work here
+                     */
                 } else {
                     res.status(500).json({
                         status: "server error",

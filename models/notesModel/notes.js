@@ -10,9 +10,10 @@ const noteSchema = mongoose.Schema({
         unique: false,
         select: true,
     },
-    userName: {
-        type: String,
-        required: [true, "User name is required"],
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "User id is required"],
         select: true,
     },
     createdDate: {
@@ -26,11 +27,11 @@ const noteSchema = mongoose.Schema({
         required: [true, "note category is required"],
         select: true,
     },
-    categoryId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        select: true,
-    }
+    // categoryId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required: true,
+    //     select: true,
+    // }
 });
 
 
