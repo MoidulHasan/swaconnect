@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 
 // schema schafoldig
-const returnSchema = mongoose.Schema({
+const returnSchema = new mongoose.Schema({
     returnReason: {
         type: String,
         required: [true, "return reason is required"],
@@ -97,5 +97,5 @@ const returnSchema = mongoose.Schema({
 });
 
 // export model
-const returns = mongoose.model("Returns", returnSchema);
-module.exports = returns;
+const simReturn = mongoose.model("simReturn", returnSchema);
+module.exports = simReturn;

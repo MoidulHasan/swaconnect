@@ -306,10 +306,11 @@ helpers.viewSimData = async (_id) => {
                 .populate("vendor")
                 // .populate("orderNumber")
                 .populate("operations")
-                .populate("agent")
+                // .populate("agent")
                 .populate("applicationNumber")
-                .populate("customerId")
+                // .populate("suscriber")
                 .populate("phonePlan")
+                .populate("returns")
             // .populate("simOperationsLog")
             // .populate("notes");
         } else {

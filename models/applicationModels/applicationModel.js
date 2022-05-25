@@ -87,5 +87,5 @@ applicationSchema.post('findOneAndUpdate', handleError);
 applicationSchema.post('insertMany', handleError);
 
 // export model
-const Application = mongoose.model("Applications", applicationSchema);
+const Application = mongoose.model("Application", applicationSchema);
 module.exports = Application;

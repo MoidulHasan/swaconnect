@@ -2,6 +2,7 @@
 const mongoose = require("mongoose");
 const customValidator = require("../../utilities/validator");
 const AppError = require("../../controllers/error/appError");
+require("../returnModels/returnModel")
 
 // Define sim card schema
 const simCardSchema = new mongoose.Schema({
@@ -79,7 +80,7 @@ const simCardSchema = new mongoose.Schema({
     orderNumber: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "SimCardOrder",
-        select: true,
+        select: false,
         default: null
     },
     compatibility: {
@@ -115,9 +116,9 @@ const simCardSchema = new mongoose.Schema({
         ref: "Application",
         default: null
     },
-    customerId: {
+    suscriber: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Customer",
+        ref: "Suscriber",
         default: null
     },
     phonePlan: {
@@ -127,8 +128,8 @@ const simCardSchema = new mongoose.Schema({
     },
     returns: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Return",
-        default: Object
+        ref: "simReturn",
+        default: null
     },
     simOperationsLog: [{
         type: mongoose.Schema.Types.ObjectId,
