@@ -9,7 +9,9 @@ const multer = require("multer");
 // module scafolding
 const file = {};
 
-file.storage = multer.diskStorage()
+file.storage = multer.diskStorage({
+
+})
 
 
 // export module

@@ -30,7 +30,8 @@ auth.createToken = (id) => {
 auth.login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-
+        logger.info("Antu");
+        logger.info(email);
         // 1) check if email and password exist
         if (!email || !password) {
             return next(
@@ -49,8 +50,9 @@ auth.login = async (req, res, next) => {
         const user = await User.findOne({
             email,
         }).select("+password");
+        logger.info(user);
 
-        console.log(user);
+
 
         if (!user || !(await user.correctPassword(password, user.password))) {
             return next(
@@ -190,6 +192,8 @@ auth.signup = async (req, res, next) => {
 
 // protector function for private routes
 auth.authenticator = async (req, res, next) => {
+    logger.info(req.url);
+
     try {
         // 1) check if the token is there
         let token;

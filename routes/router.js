@@ -22,6 +22,7 @@ const phonePlanRouter = require("./serviceCarrier/phonePlan.route")
 const vendorRouter = require("./vendor/vendorRouter")
 
 
+
 // public router
 router.all('/', baseRoutes);
 router.use('/login', loginRouter);

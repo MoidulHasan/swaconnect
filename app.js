@@ -19,6 +19,7 @@ const bodyParser = require("body-parser");
 const appError = require("./controllers/error/appError");
 const globalErrorHandler = require("./controllers/error/globalError");
 const routeHandler = require("./routes/router");
+const logger = require("./utilities/logger");
 
 
 // Module Scafolding
@@ -60,6 +61,10 @@ app.use(xss());
 // Prevent Parameter Population
 app.use(hpp());
 
+app.use((req, res, next) => {
+    logger.info(req.url);
+    next();
+})
 
 // Call route handler middleware
 app.use(routeHandler);
